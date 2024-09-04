@@ -99,6 +99,7 @@ class UserController extends Controller
     public function edit(User $user){
         // dd($user);
         $provinces = $this->provinceReponsitory->all();
+        $user_catalogues = $this->userCatalogueReponsitory->all();
         // dd($provinces);
         $config = [
             'css' => [
@@ -117,7 +118,8 @@ class UserController extends Controller
             'template',
             'config',
             'provinces',
-            'user'
+            'user',
+            'user_catalogues'
         ));
     }
 

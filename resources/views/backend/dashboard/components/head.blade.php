@@ -31,3 +31,8 @@
 
 <script src="../backend/js/jquery-3.1.1.min.js"></script>
 {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+
+<script>
+    var BASE_URL = '{{ env('APP_URL') }}';
+    var SUFFIX  = '{{ config('apps.general.suffix') }}';
+</script>

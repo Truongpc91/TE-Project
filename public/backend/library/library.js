@@ -32,12 +32,16 @@
                 console.log(option);
 
                 $.ajax({
-                    url: "http://shopproject.test/admin/ajax/dashboard/changeStatus",
+                    url: "http://shopprojectt.test/admin/ajax/dashboard/changeStatus",
                     type: "POST",
                     data: option,
                     dataType: "json",
                     success: function (res) {
-                        console.log(res);
+                        let inputValue = ((options.value == 1)?2:1);
+
+                        if(res.flag == true){
+                            _this.val(inputValue);
+                        }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.log("lỗi" + textStatus + " " + errorThrown);
@@ -98,7 +102,7 @@
                 };
 
                 $.ajax({
-                    url: "http://shopproject.test/admin/ajax/dashboard/changeStatusAll",
+                    url: "http://shopprojectt.test/admin/ajax/dashboard/changeStatusAll",
                     type: "POST",
                     data: option,
                     dataType: "json",
@@ -112,7 +116,7 @@
 
                                 if(option.value == 1){
                                     $('.js-switch-'+id[i]).find('span.switchery').attr('style', cssActive1).find('small').attr('style', cssActive2);
-                                }else if(option.value == 0){
+                                }else if(option.value == 2){
                                     $('.js-switch-'+id[i]).find('span.switchery').attr('style', cssUnActive).find('small').attr('style', cssUnActive2);
                                 }
                                 

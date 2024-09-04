@@ -17,16 +17,11 @@
                 <div class="row d-flex">
                     <div class="col-sm-4">
                         @php
-                            $publishArray = [
-                                0 => 'Chọn tình trạng',
-                                1 => 'Không xuất bản',
-                                2 => 'Xuất bản'
-                            ];
                             $publish = request('publish') ?: old('publish');
                         @endphp
                         <select name="publish" id="" class="form-control mr10 mb10 setupSelect2">
                             {{-- <option value="-1" selected="selected">Chọn Tình Trạng</option> --}}
-                            @foreach ($publishArray as $key => $val)
+                            @foreach (config('apps.general.publish') as $key => $val)
                                 <option {{ ($publish == $key) ? 'selected' : '' }} value="{{ $key }}">{{ $val }}</option>
                             @endforeach
                            

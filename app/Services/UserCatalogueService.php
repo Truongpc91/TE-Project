@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\UserCatalogue;
 use App\Repositories\Interfaces\UserCatalogueRepositoryInterface as userCatalogueRepository;
+use App\Repositories\Interfaces\UserRepositoryInterface as UserRepository;
 use App\Services\Interfaces\UserCatalogueServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -18,10 +19,12 @@ use Illuminate\Support\Facades\Hash;
 class UserCatalogueService implements UserCatalogueServiceInterface
 {
     protected $userCatalogueRepository;
+    protected $userRepository;
 
-    public function __construct(userCatalogueRepository $userCatalogueRepository)
+    public function __construct(userCatalogueRepository $userCatalogueRepository, UserRepository $userRepository)
     {
         $this->userCatalogueRepository = $userCatalogueRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function paginate($request)
@@ -89,14 +92,11 @@ class UserCatalogueService implements UserCatalogueServiceInterface
     {
         DB::beginTransaction();
         try {
-            // dd($post);
-
+            // dd($post);   
             $payload[$post['field']] = (($post['value'] == 1) ? 2 : 1);
-
-            // dd($payload);
             $user = UserCatalogue::find($post['modelId']);
-
             $updateUserCatalogue = $this->userCatalogueRepository->update($user, $payload);
+            $this->changeUserStatus($post, $payload[$post['field']]);
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -112,9 +112,32 @@ class UserCatalogueService implements UserCatalogueServiceInterface
         DB::beginTransaction();
         try {
             $payload[$post['field']] = $post['value'];
-
             $flag = $this->userCatalogueRepository->updateByWhereIn('id', $post['id'], $payload);
+            $this->changeUserStatus($post, $post['value']);
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage();
+            die();
+            return false;
+        }
+    }
 
+    private function changeUserStatus($post,$value){
+        DB::beginTransaction();
+        try {
+            $array = [];
+            
+            if(isset($post['modelId'])){
+                $array[] = $post['modelId'];
+            }else{
+                $array = $post['id'];
+            }
+            $payload[$post['field']] = $value;
+            // dd($array);
+
+            $this->userRepository->updateByWhereIn('user_catalogue_id', $array, $payload);
             DB::commit();
             return true;
         } catch (\Exception $e) {

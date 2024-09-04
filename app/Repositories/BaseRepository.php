@@ -38,18 +38,13 @@ class BaseRepository implements BaseRepositoryInterface
             }
         }
 
-        if(isset($condition['publish']) && $condition['publish'] != -1){
+        if(isset($condition['publish']) && $condition['publish'] != 0){
             $query->where('publish', '=', $condition['publish']);
         }
-
-        // return $query;
-
 
         if(!empty($join)){
             $query->join(...$join);
         }
-
-        // dd($query);
 
         return $query->paginate($perPage)->withQueryString()->withPath(env('APP_URL').$extend['path']);
     }
@@ -77,5 +72,12 @@ class BaseRepository implements BaseRepositoryInterface
 
     public function findById(int $modelId, array $column = ['*'], array $relation = []){
         return $this->model->select($column)->with($relation)->findOrFail($modelId);  
+    }
+
+    public function createLanguagePivot($model, array $payload = [])
+    {
+        // dd($payload);
+
+        return $model->languages()->attach($model->id, $payload);
     }
 }

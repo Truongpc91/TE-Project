@@ -1,4 +1,3 @@
-
 <table class="table table-striped table-bodered">
     <thead>
         <tr>
@@ -8,6 +7,7 @@
             <th>Avarta</th>
             <th>Thông tin thành viên</th>
             <th>Địa chỉ</th>
+            <th>Nhóm thành viên</th>
             <th>Tình trạng</th>
             <th class="text-center">Thao tác</th>
         </tr>
@@ -35,7 +35,9 @@
                         <div class="address-item email"><strong>Xã :</strong> {{ $user->address }}</div>
                         <div class="address-item phone"><strong>Huyện :</strong> {{ $user->address }}</div>
                         <div class="address-item phone"><strong>Thành phố :</strong> {{ $user->address }} </div>
-
+                    </td>
+                    <td>
+                        {{ $user->user_catalogues->name }}
                     </td>
                     <td class="text-navy text-center js-switch-{{ $user->id }}">
                         <input 
@@ -44,7 +46,7 @@
                             class="js-switch status"
                             data-field="publish"
                             data-model="User"
-                            {{ ($user->publish == '1') ? 'checked' : ''}} 
+                            {{ ($user->publish == 1) ? 'checked' : ''}} 
                             data-modelId="{{ $user->id }}"
                         />
                     </td>

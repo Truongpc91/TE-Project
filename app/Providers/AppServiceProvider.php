@@ -13,6 +13,12 @@ class AppServiceProvider extends ServiceProvider
         'App\Services\Interfaces\UserCatalogueServiceInterface' => 'App\Services\UserCatalogueService',
         'App\Repositories\Interfaces\UserCatalogueRepositoryInterface' => 'App\Repositories\UserCatalogueRepository',
 
+        'App\Services\Interfaces\PostCatalogueServiceInterface' => 'App\Services\PostCatalogueService',
+        'App\Repositories\Interfaces\PostCatalogueReponsitoryInterface' => 'App\Repositories\PostCatalogueReponsitory',
+        
+        'App\Services\Interfaces\LanguageServiceInterface' => 'App\Services\LanguageService',
+        'App\Repositories\Interfaces\LanguageReponsitoryInterface' => 'App\Repositories\LanguageReponsitory',
+
         'App\Repositories\Interfaces\ProvinceReponsitoryInterface' => 'App\Repositories\ProvinceReponsitory',
         'App\Repositories\Interfaces\DistrictReponsitoryInterface' => 'App\Repositories\DistrictReponsitory'
     ];

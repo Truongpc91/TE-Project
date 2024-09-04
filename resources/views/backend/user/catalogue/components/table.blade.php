@@ -30,7 +30,7 @@
                     <td class="text-navy text-center js-switch-{{ $user_catalogue->id }}">
                         <input type="checkbox" value="{{ $user_catalogue->publish }}" class="js-switch status"
                             data-field="publish" data-model="UserCatalogue"
-                            {{ $user_catalogue->publish == '1' ? 'checked' : '' }}
+                            {{ $user_catalogue->publish == 1 ? 'checked' : '' }}
                             data-modelId="{{ $user_catalogue->id }}" />
                     </td>
                     <td class="text-navy text-center">

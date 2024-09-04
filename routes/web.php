@@ -4,6 +4,8 @@ use App\Http\Controllers\Ajax\DashboardController as AjaxDashboardController;
 use App\Http\Controllers\Ajax\LocationController;
 use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\LanguageController;
+use App\Http\Controllers\Backend\PostCatalogueController;
 use App\Http\Controllers\Backend\UserCatalogueController;
 use App\Http\Controllers\Backend\UserController;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +55,31 @@ Route::prefix('admin')
                 Route::get('delete/{user_catalogue}',           [UserCatalogueController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
                 Route::delete('destroy/{user_catalogue}',       [UserCatalogueController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
             });
+
+            Route::prefix('language')
+            ->as('language.')
+            ->group(function () {
+                Route::get('index',                             [LanguageController::class, 'index'])->name('index');
+                Route::get('create',                            [LanguageController::class, 'create'])->name('create');
+                Route::post('store',                            [LanguageController::class, 'store'])->name('store');
+                Route::get('edit/{language}',                   [LanguageController::class, 'edit'])->where(['id' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{language}',                 [LanguageController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{language}',                 [LanguageController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{language}',             [LanguageController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
+            });
+
+            Route::prefix('post_catalogue')
+            ->as('post_catalogue.')
+            ->group(function (){
+                Route::get('index',                             [PostCatalogueController::class, 'index'])->name('index');
+                Route::get('create',                            [PostCatalogueController::class, 'create'])->name('create');
+                Route::post('store',                            [PostCatalogueController::class, 'store'])->name('store');
+                Route::get('edit/{language}',                   [PostCatalogueController::class, 'edit'])->where(['id' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{language}',                 [PostCatalogueController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{language}',                 [PostCatalogueController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{language}',             [PostCatalogueController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
+            });
+
         Route::get('ajax/location/getlocation',         [LocationController::class, 'getLocation'])->name('ajax.location.index');
         Route::post('ajax/dashboard/changeStatus',      [AjaxDashboardController::class, 'changeStatus'])->name('ajax.dashboard.changeStatus');
         Route::post('ajax/dashboard/changeStatusAll',   [AjaxDashboardController::class, 'changeStatusAll'])->name('ajax.dashboard.changeStatusAll');

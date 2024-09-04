@@ -3,6 +3,7 @@
 
 <head>
     @include('backend.dashboard.components.head')
+    
 </head>
 
 <body>
