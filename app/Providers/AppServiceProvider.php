@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
         'App\Services\Interfaces\LanguageServiceInterface' => 'App\Services\LanguageService',
         'App\Repositories\Interfaces\LanguageReponsitoryInterface' => 'App\Repositories\LanguageReponsitory',
 
+        'App\Services\Interfaces\PostServiceInterface' => 'App\Services\PostService',
+        'App\Repositories\Interfaces\PostReponsitoryInterface' => 'App\Repositories\PostReponsitory',
+
         'App\Repositories\Interfaces\ProvinceReponsitoryInterface' => 'App\Repositories\ProvinceReponsitory',
         'App\Repositories\Interfaces\DistrictReponsitoryInterface' => 'App\Repositories\DistrictReponsitory'
     ];

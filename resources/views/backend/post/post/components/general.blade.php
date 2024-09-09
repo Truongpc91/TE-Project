@@ -5,7 +5,7 @@
                 <span class="text-danger">(*)</span>
             </label>
             <input type="text" class="form-control" name="name" placeholder=""
-                autocomplete="off" value="{{ old('name', $postCatalogue->name ?? '') }}">
+                autocomplete="off" value="{{ old('name', $post->name ?? '') }}">
         </div>
     </div>
 </div>
@@ -14,7 +14,7 @@
         <div class="form-row">
             <label for="" class="control-label text-right">Mô tả ngắn</label>
             <textarea type="text" class="ck-editor" name="description" placeholder="" autocomplete="off"
-            id="ckDescription" data-height="100">{{ old('description', $postCatalogue->description ?? '') }}</textarea>
+            id="ckDescription" data-height="100">{{ old('description', $post->description ?? '') }}</textarea>
         </div>
     </div>
 </div>
@@ -26,7 +26,7 @@
                 <a href="" class="multipleUploadImageCkeditor text-left">Upload nhiều hình ảnh</a>
             </div>
             <textarea type="text" class="ck-editor" name="content" placeholder="" autocomplete="off"
-             id="ckContent" data-height="500">{{ old('content', $postCatalogue->content ?? '') }}</textarea>
+             id="ckContent" data-height="500">{{ old('content', $post->content ?? '') }}</textarea>
         </div>
     </div>
 </div>

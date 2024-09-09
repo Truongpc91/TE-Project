@@ -22,7 +22,17 @@ class UpdatePostCatalogueRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string',
+            'canonical' => 'required|unique:post_catalogue_language'.$this->id.'',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required'         =>  'Bạn chưa nhập tiêu đề !',
+            'canonical.required'     =>  'Bạn chưa nhập đường dẫn !',
+            'canonical.unique'     =>  'Đường dẫn đã tồn tại, Hãy chọn đường dẫn khác !',
         ];
     }
 }

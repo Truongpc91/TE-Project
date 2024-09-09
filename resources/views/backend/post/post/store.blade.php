@@ -11,8 +11,8 @@
 @php
     $url =
         $config['method'] == 'create'
-            ? route('admin.post_catalogue.store')
-            : route('admin.post_catalogue.udpate', $postCatalogue);
+            ? route('admin.posts.store')
+            : route('admin.posts.udpate', $post);
 @endphp
 
 <form action="{{ $url }}" method="POST" class="box" enctype="multipart/form-data">
@@ -28,13 +28,13 @@
                         <h5>Thông tin chung</h5>
                     </div>
                     <div class="ibox-content">
-                        @include('backend.post.catalogue.components.general')
+                        @include('backend.post.post.components.general')
                     </div>
                 </div>
-                @include('backend.post.catalogue.components.seo')
+                @include('backend.post.post.components.seo')
             </div>
             <div class="col-lg-3">
-                @include('backend.post.catalogue.components.aside')
+                @include('backend.post.post.components.aside')
             </div>
         </div>
         <div class="text-right mb15 button-fix">

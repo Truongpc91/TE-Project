@@ -21,10 +21,11 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function pagination(
         array $column = ['*'],
         array $condition = [],
-        array $join = [],
-        array $extend = [],
         int $perPage = 5,
-        array $relations = []
+        array $extend = [],
+        array $orderBy = ['id', 'DESC'],
+        array $join = [],
+        array $relations = [],
     ){
         // dd($condition);
 

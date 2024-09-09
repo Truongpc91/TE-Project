@@ -2,18 +2,19 @@
 
 namespace App\Repositories;
 
+use App\Models\Post;
 use App\Models\PostCatalogue;
-use App\Repositories\Interfaces\PostCatalogueReponsitoryInterface;
+use App\Repositories\Interfaces\PostReponsitoryInterface;
 
 /**
  * Class UserService
  * @package App\Services
  */
-class PostCatalogueReponsitory extends BaseRepository implements PostCatalogueReponsitoryInterface
+class PostReponsitory extends BaseRepository implements PostReponsitoryInterface
 {
     protected $model;
 
-    public function __construct(PostCatalogue $model){
+    public function __construct(Post $model){
         $this->model = $model;
     }
 
@@ -25,7 +26,7 @@ class PostCatalogueReponsitory extends BaseRepository implements PostCatalogueRe
         array $orderBy = ['id', 'DESC'],
         array $join = [],
         array $relations = [],
-        array $whereRaw = [],
+        array $rawQuery = [],
     ){
         $query = $this->model->select($column)->where(function($query) use ($condition){
             if(isset($condition['keyword']) && !empty($condition['keyword'])){
@@ -49,6 +50,12 @@ class PostCatalogueReponsitory extends BaseRepository implements PostCatalogueRe
             }
         }
 
+        if(isset($rawQuery['whereRaw']) && count($rawQuery['whereRaw'])){
+            foreach($rawQuery['whereRaw'] as $key => $val){
+                $query->whereRaw($val[0], $val[1]);
+            }
+        }
+
         if(isset($orderBy) && is_array($orderBy) && count($orderBy)){
             $query->orderBy($orderBy[0], $orderBy[1]);
         }
@@ -56,15 +63,15 @@ class PostCatalogueReponsitory extends BaseRepository implements PostCatalogueRe
         return $query->paginate($perPage)->withQueryString()->withPath(env('APP_URL').$extend['path']);
     }
 
-    public function getPostCatalogueById(int $id = 0, $language_id = 0){
+    public function getPostById(int $id = 0, $language_id = 0){
         return $this->model->select([
-                'post_catalogues.id',
-                'post_catalogues.parent_id',
-                'post_catalogues.image',
-                'post_catalogues.icon',
-                'post_catalogues.album',
-                'post_catalogues.publish',
-                'post_catalogues.follow',
+                'posts.id',
+                'posts.post_catalogue_id',
+                'posts.image',
+                'posts.icon',
+                'posts.album',
+                'posts.publish',
+                'posts.follow',
                 'tb2.name',
                 'tb2.description',
                 'tb2.content',
@@ -73,7 +80,8 @@ class PostCatalogueReponsitory extends BaseRepository implements PostCatalogueRe
                 'tb2.meta_description',
                 'tb2.canonical',
             ]
-        )->join('post_catalogue_language as tb2', 'tb2.post_catalogue_id', '=', 'post_catalogues.id')
+        )->join('post_language as tb2', 'tb2.post_id', '=', 'posts.id')
+        ->with('post_catalogues')
         ->where('tb2.language_id', '=', $language_id)
         ->findOrFail($id);
     }

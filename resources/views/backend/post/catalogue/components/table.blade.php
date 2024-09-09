@@ -4,9 +4,7 @@
             <th>
                 <input type="checkbox" value="" name="" id="checkAll" class="input-checkbox">
             </th>
-            <th>Tên Ngôn ngữ</th>
-            <th>Canonical</th>
-            <th>Ảnh</th>
+            <th>Tên Nhóm</th>
             <th>Tình trạng</th>
             <th class="text-center">Thao tác</th>
         </tr>
@@ -19,17 +17,9 @@
                         <input type="checkbox" value="{{ $post_catalogue->id }}" class="input-checkbox checkBoxItem">
                     </td>
                     <td>
-                        <span>{{ $post_catalogue->name }}</span>
+                        <span>{{ str_repeat('|----', (($post_catalogue->level > 0) ? ($post_catalogue->level - 1):0)).$post_catalogue->name }}</span>
                     </td>
-                    <td>
-                        <span>{{ $post_catalogue->canonical }}</span>
-                    </td>
-                    <td>
-                        <span class="image img-cover">
-                            <img src="{{ \Storage::url($post_catalogue->image)}}"
-                                alt="">
-                        </span>
-                    </td>
+                   
                     <td class="text-navy text-center js-switch-{{ $post_catalogue->id }}">
                         <input type="checkbox" value="{{ $post_catalogue->publish }}" class="js-switch status"
                             data-field="publish" data-model="PostCatalogue"
@@ -48,3 +38,5 @@
 
     </tbody>
 </table>
+
+{{ $post_catalogues->links() }}

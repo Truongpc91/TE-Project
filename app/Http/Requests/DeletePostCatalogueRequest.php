@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\PostCatalogue;
+use App\Rules\CheckPostCatalogueChildrenRule;
 
-class UpdateLanguageRequest extends FormRequest
+class DeletePostCatalogueRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,19 +23,19 @@ class UpdateLanguageRequest extends FormRequest
      */
     public function rules(): array
     {
+        $postCatalogueId = $this->route('post_catalogue');
+
         return [
-            'name' => 'required|string|',
-            'canonical' => 'required|unique:post_language,canonical,'.$this->id,
-            'image' => 'required',
+            'name' => [
+               new CheckPostCatalogueChildrenRule($postCatalogueId)
+            ],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required'         =>  'Bạn chưa nhập tên ngôn ngữ !',
-            'canonical.required'    =>  'Bạn chưa nhập canonical !',
-            'image.required'        =>  'Bạn chưa thêm ảnh cho ngôn ngữ !',
+            'name'         =>  'Có danh mục con không được xóa !',
         ];
     }
 }

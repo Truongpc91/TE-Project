@@ -36,8 +36,14 @@ class UserCatalogueService implements UserCatalogueServiceInterface
         $perPage = addslashes($request->integer('per_page'));
 
         $userCatalogues = $this->userCatalogueRepository->pagination(
-            ['*'], $condition, [], ['path' => 'admin/catalogue/index'], $perPage, ['users']);
-        
+            ['*'],
+            $condition,
+            $perPage,
+            ['path' => 'admin/catalogue/index'],
+            ['id', 'DESC'],
+            [],
+            ['users']);
+           
         // dd($userCatalogues);
 
         return $userCatalogues;

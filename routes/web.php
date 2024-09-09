@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\LanguageController;
 use App\Http\Controllers\Backend\PostCatalogueController;
+use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\UserCatalogueController;
 use App\Http\Controllers\Backend\UserController;
 use Illuminate\Support\Facades\Route;
@@ -71,13 +72,25 @@ Route::prefix('admin')
             Route::prefix('post_catalogue')
             ->as('post_catalogue.')
             ->group(function (){
-                Route::get('index',                             [PostCatalogueController::class, 'index'])->name('index');
-                Route::get('create',                            [PostCatalogueController::class, 'create'])->name('create');
-                Route::post('store',                            [PostCatalogueController::class, 'store'])->name('store');
-                Route::get('edit/{language}',                   [PostCatalogueController::class, 'edit'])->where(['id' => '[0-9]+'])->name('edit');
-                Route::put('udpate/{language}',                 [PostCatalogueController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
-                Route::get('delete/{language}',                 [PostCatalogueController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
-                Route::delete('destroy/{language}',             [PostCatalogueController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
+                Route::get('index',                                     [PostCatalogueController::class, 'index'])->name('index');
+                Route::get('create',                                    [PostCatalogueController::class, 'create'])->name('create');
+                Route::post('store',                                    [PostCatalogueController::class, 'store'])->name('store');
+                Route::get('edit/{post_catalogue}',                     [PostCatalogueController::class, 'edit'])->where(['id' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{post_catalogue}',                   [PostCatalogueController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{post_catalogue}',                   [PostCatalogueController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{post_catalogue}',               [PostCatalogueController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
+            });
+
+            Route::prefix('posts')
+            ->as('posts.')
+            ->group(function (){
+                Route::get('index',                             [PostController::class, 'index'])->name('index');
+                Route::get('create',                            [PostController::class, 'create'])->name('create');
+                Route::post('store',                            [PostController::class, 'store'])->name('store');
+                Route::get('edit/{post}',                       [PostController::class, 'edit'])->where(['id' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{post}',                     [PostController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{post}',                     [PostController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{post}',                 [PostController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
             });
 
         Route::get('ajax/location/getlocation',         [LocationController::class, 'getLocation'])->name('ajax.location.index');

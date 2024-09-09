@@ -13,7 +13,7 @@ return [
                 ],
                 [
                     'title' => 'QL Bài Viết',
-                    'route' => "admin/post/index"
+                    'route' => "admin/posts/index"
                 ]
             ]
         ],

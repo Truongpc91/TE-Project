@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Http\Requests\StorePostCatalogueRequest;
 use App\Http\Requests\UpdatePostCatalogueRequest;
+use App\Http\Requests\DeletePostCatalogueRequest;
+
 use App\Models\PostCatalogue;
 use Illuminate\Support\Facades\Auth;
 use App\Classes\Nestedsetbie;
@@ -21,6 +23,7 @@ class PostCatalogueController extends Controller
     protected $postCatalogueService;
     protected $postCatalogueReponsitory;
     protected $nestedset;
+    protected $language;
 
     public function __construct(PostCatalogueService $postCatalogueService, PostCatalogueReponsitory $postCatalogueReponsitory, Nestedsetbie $nestedset)
     {
@@ -31,6 +34,7 @@ class PostCatalogueController extends Controller
             'foreignkey' => 'post_catalogue_id',
             'language_id' =>  1,
         ]);
+        $this->language = $this->currentLanguage();
     }
 
     public function index(Request $request)
@@ -98,45 +102,38 @@ class PostCatalogueController extends Controller
     }
 
     public function edit(PostCatalogue $post_catalogue){
-        // dd($user);
-        // dd($provinces);
+
+        $postCatalogue = $this->postCatalogueReponsitory->getPostCatalogueById($post_catalogue->id, $this->language);
+
         $config = [
             'css' => [
                 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
             ],
             'js' => [
                 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
-                'backend/library/location.js'
+                'backend/library/location.js',
+                'backend/library/seo.js',
+                'backend/library/finder.js',
+                'backend/plugins/ckeditor/ckeditor.js',
+                'backend/plugins/ckfinder_2/ckfinder.js',
             ]
         ];
 
         $config['seo'] = config('apps.postCatalogue');
         $config['method'] = 'edit';
+        $dropdown = $this->nestedset->Dropdown();
         $template = 'backend.post.catalogue.store';
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
-            'post_catalogue'
+            'dropdown',
+            'postCatalogue'
         ));
     }
 
     public function udpate(UpdatePostCatalogueRequest $request, PostCatalogue $post_catalogue){
-
-        $data = $request->except('_token', 'send', '_method');
-        $data['user_id'] = Auth::user()->id;
-        // dd($data);
-
-        if ($request->hasFile('image')) {
-            $data['image'] = Storage::put(self::PATH_UPLOAD, $request->file('image'));
-        }
-
-        $currentImage = $post_catalogue->image;
-
-        if($request->hasFile('image') && $currentImage && Storage::exists($currentImage)){
-            Storage::delete($currentImage);
-        }
        
-        if ($this->postCatalogueService->update($data, $post_catalogue)) {
+        if ($this->postCatalogueService->update($request, $post_catalogue)) {
             return redirect()->route('admin.post_catalogue.index')->with('success', 'Cập nhật Post Catalogue thành công !');
         } else {
             return redirect()->route('admin.post_catalogue.index')->with('error', 'Cập nhật Post Catalogue thất bại! Hãy thử lại');
@@ -147,21 +144,25 @@ class PostCatalogueController extends Controller
         $template = 'backend.post.catalogue.delete';
         $config['seo'] = config('apps.postCatalogue');
 
+        $postCatalogue = $this->postCatalogueReponsitory->getPostCatalogueById($post_catalogue->id, $this->language);
+
+        // dd($postCatalogue);
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
-            'post_catalogue'
+            'postCatalogue'
         ));
     }
 
-    public function destroy(PostCatalogue $post_catalogue){
-        $currentImage = $post_catalogue->image;
+    public function destroy(DeletePostCatalogueRequest $request, PostCatalogue $postCatalogue){
+        
+        $currentImage = $postCatalogue->image;
 
         if($currentImage && Storage::exists($currentImage)){
             Storage::delete($currentImage);
         }
        
-        if ($this->postCatalogueService->destroy($post_catalogue)) {
+        if ($this->postCatalogueService->destroy($postCatalogue)) {
             return redirect()->route('admin.post_catalogue.index')->with('success', 'Xóa Post Catalogue thành công !');
         } else {
             return redirect()->route('admin.post_catalogue.index')->with('error', 'Xóa Post Catalogue thất bại! Hãy thử lại');

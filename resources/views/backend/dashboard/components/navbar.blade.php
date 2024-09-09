@@ -10,8 +10,17 @@
             </form>
         </div>
         <ul class="nav navbar-top-links navbar-right">
+            {{-- @dd($language) --}}
+            @foreach ($languages as $language)
+                <li class="ml-2">
+                    <a href="">
+                        <img class="image img-cover language-item" src="{{ \Storage::url($language->image) }}"
+                            alt="" width="30">
+                    </a>
+                </li>
+            @endforeach
             <li>
-                <span class="m-r-sm text-muted welcome-message">Welcome to T-Ecommerce +</span>
+                <span class="m-r-sm text-muted welcome-message language">Welcome to T-Ecommerce +</span>
             </li>
             <li class="dropdown">
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">

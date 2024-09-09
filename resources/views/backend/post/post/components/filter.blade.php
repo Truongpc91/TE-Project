@@ -1,4 +1,4 @@
-<form action="{{ route('admin.post_catalogue.index') }}" method="">
+<form action="{{ route('admin.posts.index') }}" method="">
     <div class="filter-wrapper">
         <div class="row">
             <div class="perpage col-sm-2">
@@ -15,17 +15,29 @@
             </div>
             <div class="action col-sm-8">
                 <div class="row d-flex">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         @php
                             $publish = request('publish') ?: old('publish');
+                            $postCatalogueId = request('post_catalogue_id') ?: old('post_catalogue_id');
                         @endphp
-                        <select name="publish" id="" class="form-control mr10 mb10 setupSelect2">
-                            @foreach (config('apps.general.publish') as $key => $val)
-                                <option {{ ($publish == $key) ? 'selected' : '' }} value="{{ $key }}">{{ $val }}</option>
-                            @endforeach
-                        </select>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <select name="publish" id="" class="form-control mr10 mb10 setupSelect2">
+                                    @foreach (config('apps.general.publish') as $key => $val)
+                                        <option {{ ($publish == $key) ? 'selected' : '' }} value="{{ $key }}">{{ $val }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <select name="post_catalogue_id" id="" class="form-control mr10 mb10 setupSelect2">
+                                    @foreach ($dropDown as $key => $val)
+                                        <option {{ ($postCatalogueId == $key) ? 'selected' : '' }} value="{{ $key }}">{{ $val }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-sm-7">
                         <div class="row">
                             <div class="col-sm-10">
                                 <input 
@@ -41,11 +53,15 @@
                                     class="btn btn-primary mb10 btn-sm"> Tìm kiếm</button>
                             </div>
                         </div>
+                        {{-- <div class="col-sm-2">
+                            <button type="submit" name="search" value="search"
+                                class="btn btn-primary mb10 btn-sm"> Tìm kiếm</button>
+                        </div> --}}
                     </div>
                 </div>
             </div>
             <div class="col-sm-2">
-                <a href="{{ route('admin.post_catalogue.create') }}" class="btn btn-danger"><i class="fa fa-plus"></i> Thêm
+                <a href="{{ route('admin.posts.create') }}" class="btn btn-danger"><i class="fa fa-plus"></i> Thêm
                     mới</a>
             </div>
         </div>

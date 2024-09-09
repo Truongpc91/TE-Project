@@ -1,6 +1,6 @@
 @include('backend.dashboard.components.breadcrumb', ['title' => $config['seo']['delete']['title']])
 
-<form action="{{ route('admin.post_catalogue.destroy', $postCatalogue) }}" method="POST" class="box" enctype="multipart/form-data">
+<form action="{{ route('admin.posts.destroy', $post) }}" method="POST" class="box" enctype="multipart/form-data">
     @csrf
     @method('DELETE')
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -9,7 +9,7 @@
                 <div class="panel-head">
                     <div class="panel-title">Thông tin chung</div>
                     <div class="panel-description">
-                        <p>Xóa ngôn ngữ : <span class="text-danger">{{ $postCatalogue->name }}</span></p>
+                        <p>Xóa ngôn ngữ : <span class="text-danger">{{ $post->name }}</span></p>
                         <p>Lưu ý:</span> Xóa không thể khôi phục nhóm thành viên sau khi xóa. Hãy chắc chắn bạn muốn thực hiện chức năng này !</p>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                                         <span class="text-danger">(*)</span>
                                     </label>
                                     <input type="text" class="form-control" name="name" placeholder=""
-                                        autocomplete="off" value="{{ old('name', $postCatalogue->name ?? '') }}" readonly>
+                                        autocomplete="off" value="{{ old('name', $post->name ?? '') }}" readonly>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -33,7 +33,7 @@
                                         <span class="text-danger">(*)</span>
                                     </label>
                                     <input type="text" class="form-control" name="canonical" placeholder=""
-                                        autocomplete="off" value="{{ old('description', $postCatalogue->canonical ?? '') }}" readonly>
+                                        autocomplete="off" value="{{ old('description', $post->canonical ?? '') }}" readonly>
                                 </div>
                             </div>
                         </div>

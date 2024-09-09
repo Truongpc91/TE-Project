@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
 use App\Repositories\Interfaces\BaseRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,35 +20,29 @@ class BaseRepository implements BaseRepositoryInterface
     public function pagination(
         array $column = ['*'],
         array $condition = [],
-        array $join = [],
-        array $extend = [],
         int $perPage = 5,
-        array $relations = []
+        array $extend = [],
+        array $orderBy = ['id', 'DESC'],
+        array $join = [],
+        array $relations = [],
+        array $rawQuery = [],
     ){
-        $query = $this->model->select($column)->where(function($query) use ($condition){
-            if(isset($condition['keyword']) && !empty($condition['keyword'])){
-                $query->where('name', 'LIKE', '%'.$condition['keyword'].'%');
-            }
-        });
-
-        if(isset($relations) && !empty($relations)){
-            foreach($relations as $relation){
-                $query->withCount($relation);
-            }
-        }
-
-        if(isset($condition['publish']) && $condition['publish'] != 0){
-            $query->where('publish', '=', $condition['publish']);
-        }
-
-        if(!empty($join)){
-            $query->join(...$join);
-        }
-
-        return $query->paginate($perPage)->withQueryString()->withPath(env('APP_URL').$extend['path']);
+        $query = $this->model->select($column);
+        return $query  
+                ->keyword($condition['keyword'] ?? null)
+                ->publish($condition['publish'] ?? null)
+                ->relationCount($relations ?? null)
+                ->CustomWhere($condition['where'] ?? null)
+                ->customWhereRaw($rawQuery['whereRaw'] ?? null)
+                ->customJoin($join ?? null)
+                ->customGroupBy($extend['groupBy'] ?? null)
+                ->customOrderBy($orderBy ?? null)
+                ->paginate($perPage)
+                ->withQueryString()->withPath(env('APP_URL').$extend['path']);
     }
-
+    
     public function create($data){
+        // dd($data, $this->model);
         $model =  $this->model->create($data);
         return $model->fresh();
     }
@@ -70,14 +63,25 @@ class BaseRepository implements BaseRepositoryInterface
         return $this->model->all();
     }
 
-    public function findById(int $modelId, array $column = ['*'], array $relation = []){
+    public function findById(
+        int $modelId,
+        array $column = ['*'],
+        array $relation = []
+    ){
         return $this->model->select($column)->with($relation)->findOrFail($modelId);  
     }
 
-    public function createLanguagePivot($model, array $payload = [])
-    {
-        // dd($payload);
-
-        return $model->languages()->attach($model->id, $payload);
+    public function createPivot($model, array $payload = [], string $relation = ''){
+        // dd($model, $payload);
+        return $model->{$relation}()->attach($model->id, $payload);
     }
+
+    // updatePivot($post, $payloadLanguage, 'languages')
+
+    // public function createRelationPivot($model, array $payload = [])
+    // {
+    //     // dd($payload, $model);
+
+    //     return $model->languages()->attach($model->id, $payload);
+    // }
 }

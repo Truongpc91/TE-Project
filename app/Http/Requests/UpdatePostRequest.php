@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateLanguageRequest extends FormRequest
+class UpdatePostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,18 +22,19 @@ class UpdateLanguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|',
-            'canonical' => 'required|unique:post_language,canonical,'.$this->id,
-            'image' => 'required',
+            'name' => 'required',
+            // 'canonical' => 'required|unique:posts,canonical, '.$this->id.',module_id',
+            'post_catalogue_id' => 'gt:0',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required'         =>  'Bạn chưa nhập tên ngôn ngữ !',
-            'canonical.required'    =>  'Bạn chưa nhập canonical !',
-            'image.required'        =>  'Bạn chưa thêm ảnh cho ngôn ngữ !',
+            'name.required' => 'Bạn chưa nhập vào ô tiêu đề.',
+            // 'canonical.required' => 'Bạn chưa nhập vào ô đường dẫn',
+            // 'canonical.unique' => 'Đường dẫn đã tồn tại, Hãy chọn đường dẫn khác',
+            'post_catalogue_id.gt' => 'Bạn phải nhập vào danh mục cha',
         ];
     }
 }

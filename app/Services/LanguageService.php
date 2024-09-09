@@ -30,8 +30,12 @@ class LanguageService implements LanguageServiceInterface
         $perPage = addslashes($request->integer('per_page'));
 
         $userCatalogues = $this->languageRepository->pagination(
-            ['*'], $condition, [], ['path' => 'admin/language/index'], $perPage, []);
-        
+            ['*'],
+            $condition,
+            $perPage,
+            ['path' => 'admin/language/index'],
+            );
+           
         // dd($userCatalogues);
 
         return $userCatalogues;
