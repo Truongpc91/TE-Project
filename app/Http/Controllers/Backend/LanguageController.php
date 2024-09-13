@@ -9,6 +9,7 @@ use App\Repositories\Interfaces\LanguageReponsitoryInterface as LanguageReponsit
 use Illuminate\Support\Facades\Storage;
 
 use App\Http\Requests\StoreLanguageRequest;
+use App\Http\Requests\TranslateRequest;
 use App\Http\Requests\UpdateLanguageRequest;
 use App\Models\Language;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,8 @@ class LanguageController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('modules', 'admin.language.index');
+
         $languages = $this->LanguageService->paginate($request);
 
         $config = [
@@ -50,7 +53,8 @@ class LanguageController extends Controller
 
     public function create()
     {
-        // dd($user_catalogues);
+        $this->authorize('modules', 'admin.language.create');
+
         $config = [
             'css' => [
                 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
@@ -72,6 +76,7 @@ class LanguageController extends Controller
 
     public function store(StoreLanguageRequest $request)
     {
+        
         $data = $request->except('_token','send');
 
         $data['user_id'] = Auth::user()->id;
@@ -90,7 +95,8 @@ class LanguageController extends Controller
 
     public function edit(Language $language){
         // dd($user);
-        // dd($provinces);
+        $this->authorize('modules', 'admin.language.update');
+
         $config = [
             'css' => [
                 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
@@ -115,7 +121,6 @@ class LanguageController extends Controller
 
         $data = $request->except('_token', 'send', '_method');
         $data['user_id'] = Auth::user()->id;
-        // dd($data);
 
         if ($request->hasFile('image')) {
             $data['image'] = Storage::put(self::PATH_UPLOAD, $request->file('image'));
@@ -126,7 +131,7 @@ class LanguageController extends Controller
         if($request->hasFile('image') && $currentImage && Storage::exists($currentImage)){
             Storage::delete($currentImage);
         }
-       
+
         if ($this->LanguageService->update($data, $languages)) {
             return redirect()->route('admin.language.index')->with('success', 'Cập nhật Language thành công !');
         } else {
@@ -134,14 +139,16 @@ class LanguageController extends Controller
         }
     }
 
-    public function delete(Language $languages){
+    public function delete(Language $language){
+        $this->authorize('modules', 'admin.language.destroy');
+
         $template = 'backend.language.delete';
         $config['seo'] = config('apps.language');
 
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
-            'languages'
+            'language'
         ));
     }
 
@@ -157,5 +164,76 @@ class LanguageController extends Controller
         } else {
             return redirect()->route('admin.language.index')->with('error', 'Xóa Language thất bại! Hãy thử lại');
         }
+    }
+
+    public function swicthBackendLanguage(Language $language){
+        if($this->LanguageService->switch($language)){
+            // dd($language->canonical);
+            session(['app_locale' => $language->canonical]);
+            \App::setLocale($language->canonical);
+        }
+
+        return redirect()->back();
+    }
+
+    public function translate($id = 0, $languageId = 0, $model = ''){
+        $repositoryInstance = $this->respositoryInstance($model);
+
+        $languageInstance = $this->respositoryInstance('Language');
+        $currentLanguage = $languageInstance->findByCondition([
+            ['canonical' , '=', session('app_locale')]
+        ]);
+        $method = 'get'.$model.'ById';
+        $object = $repositoryInstance->{$method}($id, $currentLanguage->id);
+        // dd($object);
+
+        $objectTranslate = $repositoryInstance->{$method}($id, $languageId);
+
+        $this->authorize('modules', 'admin.language.translate');
+        $config = [
+            'css' => [
+                'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
+            ],
+            'js' => [
+                'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
+                'backend/library/location.js',
+                'backend/library/seo.js',
+                'backend/library/finder.js',
+                'backend/plugins/ckeditor/ckeditor.js',
+                'backend/plugins/ckfinder_2/ckfinder.js',
+            ]
+        ];
+
+        $config['seo'] = config('apps.language');
+        $template = 'backend.language.translate';
+        $option = [
+            'id' => $id,
+            'languageId' => $languageId,
+            'model' => $model,
+        ];
+        return view('backend.dashboard.layout', compact(
+            'template',
+            'config',
+            'option',
+            'object',
+            'objectTranslate'
+        ));
+    }
+
+    private function respositoryInstance($model){
+        $repositoryNamespace = '\App\Repositories\\' . ucfirst($model) . 'Reponsitory';
+        if (class_exists($repositoryNamespace)) {
+            $repositoryInstance = app($repositoryNamespace);
+        }
+        return $repositoryInstance ?? null;
+    }
+
+    public function storeTranslate(TranslateRequest $request){
+        // dd($request);
+        $option = $request->input('option');
+        if($this->LanguageService->saveTranslate($option, $request)){
+            return redirect()->back()->with('success', 'Cập nhật bản ghi thành công');
+        }
+        return redirect()->back()->with('error','Có vấn đề xảy ra, Hãy Thử lại');
     }
 }

@@ -229,3 +229,12 @@ input[name=canonical] {
     text-overflow: ellipsis;
     font-weight: 600;
 }
+
+.language-item .active {
+    background: #2962ff;
+}
+
+.seo-canonical{
+    color:navy;
+    font-weight:600;
+}

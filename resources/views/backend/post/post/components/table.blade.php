@@ -5,6 +5,8 @@
                 <input type="checkbox" value="" name="" id="checkAll" class="input-checkbox">
             </th>
             <th>Tiêu đề</th>
+            @include('backend.dashboard.components.languageTh')
+            <th style="width:5%">Sắp xếp</th>    
             <th style="width:10%">Tình trạng</th>
             <th class="text-center">Thao tác</th>
         </tr>
@@ -32,6 +34,7 @@
                             </div>
                         </div>
                     </td>
+                    @include('backend.dashboard.components.languageTd', ['model' => $post, 'modeling' => 'Post'])
                     <td>
                         <input type="text" name="order" value="{{ $post->order }}"
                             class="form-control sort-order text-right" data-id="{{ $post->id }}"

@@ -1,15 +1,15 @@
 <div class="ibox">
     <div class="ibox-title">
-        <h5>Cấu Hình SEO</h5>
+        <h5>{{ __('messages.seo') }}</h5>
     </div>
     <div class="ibox-content">
         <div class="seo-container">
-            <div class="h3 meta-title">{{ old('meta_title', (isset($post) ? $post->meta_title ?? '': 'Bạn chưa nhập tiêu đề SEO')) }}</div>
+            <div class="h3 meta-title">{{ old('meta_title', (isset($post) ? $post->meta_title ?? '': __('messages.seoTitle'))) }}</div>
             <div class="canonical">
-                {{ old('canonical', (isset($post) ? ($post->canonical) ? env('APP_URL').$post->canonical.config('apps.general.suffix') :  'http://shopprojectt.test/duong-dan-cua-ban.html' ?? '' : 'http://shopprojectt.test/duong-dan-cua-ban.html'))  }}
+                {{ old('canonical', (isset($post) ? ($post->canonical) ? env('APP_URL').$post->canonical.config('apps.general.suffix') :  __('messages.seoCanonical') ?? '' : __('messages.seoCanonical')))  }}
             </div>
             <div class="meta-description">
-                {{ old('meta_description', (isset($post) ? $post->meta_description ?? '': 'Bạn chưa nhập mô tả SEO')) }}
+                {{ old('meta_description', (isset($post) ? $post->meta_description ?? '': __('messages.seoDescription'))) }}
                 {{-- {{ old('meta_description') ?? 'Bạn chưa có mô tả SEO' }} --}}
             </div>
             <div class="seo-wrapper">
@@ -18,7 +18,7 @@
                         <div class="form-row">
                             <label for="" class="control-label text-right">
                                 <div class="">
-                                    <span>Mô tả SEO | </span>
+                                    <span>{{ __('messages.seoMetaTitle') }} | </span>
                                     <span class="count_meta_title">0 ký tự</span>
                                 </div>
                             </label>
@@ -33,7 +33,7 @@
                         <div class="form-row">
                             <label for="" class="control-label text-right">
                                 <div class="">
-                                    <span>Từ Khóa SEO | </span>
+                                    <span>{{ __('messages.seoMetaKeyword') }} | </span>
                                     <span class="count_meta_keyword">0 ký tự</span>
                                 </div>
                             </label>
@@ -48,7 +48,7 @@
                         <div class="form-row">
                             <label for="" class="control-label text-right">
                                 <div class="">
-                                    <span>Mô tả SEO | </span>
+                                    <span>{{ __('messages.seoMetaDescription') }} | </span>
                                     <span class="count_meta_description">0 ký tự</span>
                                 </div>
                             </label>
@@ -61,7 +61,7 @@
                     <div class="col-lg-12">
                         <div class="form-row">
                             <label for="" class="control-label text-right">
-                                <span>Đường Dẫn <span class="text-danger">*</span></span>
+                                <span>{{ __('messages.canonical') }} <span class="text-danger">*</span></span>
                             </label>
                             <div class="input-wrapper">
                                 <input type="text" class="form-control seo-canonical" name="canonical" placeholder=""

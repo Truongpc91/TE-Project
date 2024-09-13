@@ -23,7 +23,7 @@ class UpdateLanguageRequest extends FormRequest
     {
         return [
             'name' => 'required|string|',
-            'canonical' => 'required|unique:post_language,canonical,'.$this->id,
+            // 'canonical' => 'required|unique:post_language,canonical,'.$this->id,
             'image' => 'required',
         ];
     }
@@ -32,7 +32,7 @@ class UpdateLanguageRequest extends FormRequest
     {
         return [
             'name.required'         =>  'Bạn chưa nhập tên ngôn ngữ !',
-            'canonical.required'    =>  'Bạn chưa nhập canonical !',
+            // 'canonical.required'    =>  'Bạn chưa nhập canonical !',
             'image.required'        =>  'Bạn chưa thêm ảnh cho ngôn ngữ !',
         ];
     }

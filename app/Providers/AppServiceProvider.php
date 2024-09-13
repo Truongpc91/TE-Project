@@ -8,22 +8,12 @@ class AppServiceProvider extends ServiceProvider
 {
     protected $serviceBindings = [
         'App\Services\Interfaces\UserServiceInterface' => 'App\Services\UserService',
-        'App\Repositories\Interfaces\UserRepositoryInterface' => 'App\Repositories\UserRepository',
-
         'App\Services\Interfaces\UserCatalogueServiceInterface' => 'App\Services\UserCatalogueService',
-        'App\Repositories\Interfaces\UserCatalogueRepositoryInterface' => 'App\Repositories\UserCatalogueRepository',
-
+        'App\Services\Interfaces\PermissionServiceInterface' => 'App\Services\PermissionService',
         'App\Services\Interfaces\PostCatalogueServiceInterface' => 'App\Services\PostCatalogueService',
-        'App\Repositories\Interfaces\PostCatalogueReponsitoryInterface' => 'App\Repositories\PostCatalogueReponsitory',
-        
         'App\Services\Interfaces\LanguageServiceInterface' => 'App\Services\LanguageService',
-        'App\Repositories\Interfaces\LanguageReponsitoryInterface' => 'App\Repositories\LanguageReponsitory',
-
+        'App\Services\Interfaces\GenerateServiceInterface' => 'App\Services\GenerateService',
         'App\Services\Interfaces\PostServiceInterface' => 'App\Services\PostService',
-        'App\Repositories\Interfaces\PostReponsitoryInterface' => 'App\Repositories\PostReponsitory',
-
-        'App\Repositories\Interfaces\ProvinceReponsitoryInterface' => 'App\Repositories\ProvinceReponsitory',
-        'App\Repositories\Interfaces\DistrictReponsitoryInterface' => 'App\Repositories\DistrictReponsitory'
     ];
 
     /**
@@ -34,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
         foreach ($this->serviceBindings as $key => $value) {
             $this->app->bind($key, $value);
         }
+
+        $this->app->register(ReponsitoryServiceProvider::class);
     }
 
     /**

@@ -1,7 +1,7 @@
 <div class="row mb15">
     <div class="col-lg-12">
         <div class="form-row">
-            <label for="" class="control-label text-right">Tiêu đề nhóm bài viết
+            <label for="" class="control-label text-right">{{ __('messages.title') }}
                 <span class="text-danger">(*)</span>
             </label>
             <input type="text" class="form-control" name="name" placeholder=""
@@ -12,7 +12,7 @@
 <div class="row mb15">
     <div class="col-lg-12">
         <div class="form-row">
-            <label for="" class="control-label text-right">Mô tả ngắn</label>
+            <label for="" class="control-label text-right">{{ __('messages.description') }}</label>
             <textarea type="text" class="ck-editor" name="description" placeholder="" autocomplete="off"
             id="ckDescription" data-height="100">{{ old('description', $postCatalogue->description ?? '') }}</textarea>
         </div>
@@ -22,8 +22,8 @@
     <div class="col-lg-12">
         <div class="form-row">
             <div class="">
-                <label for="" class="control-label text-right">Nội dung</label>
-                <a href="" class="multipleUploadImageCkeditor text-left">Upload nhiều hình ảnh</a>
+                <label for="" class="control-label text-right">{{ __('messages.content') }}</label>
+                <a href="" class="multipleUploadImageCkeditor text-left">{{ __('messages.upload') }}</a>
             </div>
             <textarea type="text" class="ck-editor" name="content" placeholder="" autocomplete="off"
              id="ckContent" data-height="500">{{ old('content', $postCatalogue->content ?? '') }}</textarea>

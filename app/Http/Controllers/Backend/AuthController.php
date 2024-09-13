@@ -27,12 +27,14 @@ class AuthController extends Controller
             'password' => $request->password,
         ];
 
-        // dd($credentials);
+        // dd($credentials,Auth::attempt($credentials));
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            // toastr()->success('Đăng nhập thành công !');
+
             return redirect()->route('admin.dashboard.index')->with('success', 'Đăng nhập thành công');
+        }else {
+            return redirect()->route('auth.admin')->with('error', 'Email hoặc mật khẩu không chính xác');
         }
 
         // toastr()->error('Email hoặc mật khẩu không chính xác !');

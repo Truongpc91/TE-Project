@@ -26,25 +26,34 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         array $orderBy = ['id', 'DESC'],
         array $join = [],
         array $relations = [],
+        array $whereRaw = [],
     ){
         // dd($condition);
 
         $query = $this->model->select($column)->where(function($query) use ($condition){
             if(isset($condition['keyword']) && !empty($condition['keyword'])){
-                $query->where('name', 'LIKE', '%'.$condition['keyword'].'%')
-                    ->orWhere('email', 'LIKE', '%'.$condition['keyword'].'%')
-                    ->orWhere('address', 'LIKE', '%'.$condition['keyword'].'%')
-                    ->orWhere('phone', 'LIKE', '%'.$condition['keyword'].'%');
+                $query->where('name', 'LIKE', '%'.$condition['keyword'].'%');
             }
+        });
 
-            if(isset($condition['publish']) && $condition['publish'] != 0){
-                $query->where('publish', '=', ($condition['publish']));
+        if(isset($relations) && !empty($relations)){
+            foreach($relations as $relation){
+                $query->withCount($relation);
             }
-            return $query;
-        })->with('user_catalogues');
+        }
 
-        if(!empty($join)){
-            $query->join(...$join);
+        if(isset($condition['publish']) && $condition['publish'] != 0){
+            $query->where('publish', '=', $condition['publish']);
+        }
+
+        if(isset($join) && is_array($join) && count($join)){
+            foreach($join as $key => $val){
+                $query->join($val[0], $val[1], $val[2], $val[3]);
+            }
+        }
+
+        if(isset($orderBy) && is_array($orderBy) && count($orderBy)){
+            $query->orderBy($orderBy[0], $orderBy[1]);
         }
 
         // dd($query);

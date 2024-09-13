@@ -5,6 +5,7 @@
                 <input type="checkbox" value="" name="" id="checkAll" class="input-checkbox">
             </th>
             <th>Tên Nhóm</th>
+            @include('backend.dashboard.components.languageTh')
             <th>Tình trạng</th>
             <th class="text-center">Thao tác</th>
         </tr>
@@ -19,7 +20,12 @@
                     <td>
                         <span>{{ str_repeat('|----', (($post_catalogue->level > 0) ? ($post_catalogue->level - 1):0)).$post_catalogue->name }}</span>
                     </td>
-                   
+                    @include('backend.dashboard.components.languageTd', ['model' => $post_catalogue, 'modeling' => 'PostCatalogue'])
+                    {{-- @foreach ($languages as $language)
+                        <td>
+                            <a href="">Chưa dịch</a>
+                        </td>
+                    @endforeach --}}
                     <td class="text-navy text-center js-switch-{{ $post_catalogue->id }}">
                         <input type="checkbox" value="{{ $post_catalogue->publish }}" class="js-switch status"
                             data-field="publish" data-model="PostCatalogue"

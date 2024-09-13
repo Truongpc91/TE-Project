@@ -27,6 +27,7 @@ class BaseRepository implements BaseRepositoryInterface
         array $relations = [],
         array $rawQuery = [],
     ){
+        // dd($condition);
         $query = $this->model->select($column);
         return $query  
                 ->keyword($condition['keyword'] ?? null)
@@ -47,20 +48,31 @@ class BaseRepository implements BaseRepositoryInterface
         return $model->fresh();
     }
 
-    public function update($user, $data){
-        return $user->update($data);
+    public function update($model, $data){
+        // dd($model, $data);
+
+        return $model->update($data);
     }
 
     public function updateByWhereIn(string $whereInField = '', array $whereIn = [], $data){
         return $this->model->whereIn($whereInField,$whereIn)->update($data);
     }
 
+    public function updateByWhere($condition = [], array $payload = []){
+        $query = $this->model->newQuery();
+        foreach($condition as $key => $val){
+            $value = $query->where($val[0], $val[1] , $val[2])->get();
+        }
+
+        return $query->update($payload);
+    }
+
     public function destroy($user){
         return $user->delete();
     }
 
-    public function all(){
-        return $this->model->all();
+    public function all(array $relation = []){
+        return $this->model->with($relation)->get();
     }
 
     public function findById(
@@ -69,6 +81,14 @@ class BaseRepository implements BaseRepositoryInterface
         array $relation = []
     ){
         return $this->model->select($column)->with($relation)->findOrFail($modelId);  
+    }
+
+    public function findByCondition($condition = []){
+        $query = $this->model->newQuery();
+        foreach($condition as $key => $val){
+            $query->where($val[0], $val[1] , $val[2]);
+        }
+        return $query->first();
     }
 
     public function createPivot($model, array $payload = [], string $relation = ''){

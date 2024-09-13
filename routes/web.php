@@ -4,7 +4,9 @@ use App\Http\Controllers\Ajax\DashboardController as AjaxDashboardController;
 use App\Http\Controllers\Ajax\LocationController;
 use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\GenerateController;
 use App\Http\Controllers\Backend\LanguageController;
+use App\Http\Controllers\Backend\PermissionsController;
 use App\Http\Controllers\Backend\PostCatalogueController;
 use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\UserCatalogueController;
@@ -28,7 +30,7 @@ Route::get('/', function () {
 
 Route::prefix('admin')
     ->as('admin.')
-    ->middleware('admin')
+    ->middleware(['admin','locale'])
     ->group(function () {
 
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
@@ -55,18 +57,36 @@ Route::prefix('admin')
                 Route::put('udpate/{user_catalogue}',           [UserCatalogueController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
                 Route::get('delete/{user_catalogue}',           [UserCatalogueController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
                 Route::delete('destroy/{user_catalogue}',       [UserCatalogueController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
+                Route::get('permission',                        [UserCatalogueController::class, 'permission'])->name('permission');
+                Route::post('updatePermission',                 [UserCatalogueController::class, 'updatePermission'])->name('updatePermission');
+            });
+
+            Route::prefix('permissions')
+            ->as('permissions.')
+            ->group(function () {
+                Route::get('index',                             [PermissionsController::class, 'index'])->name('index');
+                Route::get('create',                            [PermissionsController::class, 'create'])->name('create');
+                Route::post('store',                            [PermissionsController::class, 'store'])->name('store');
+                Route::get('edit/{permission}',                 [PermissionsController::class, 'edit'])->where(['id' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{permission}',               [PermissionsController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{permission}',               [PermissionsController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{permission}',           [PermissionsController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
             });
 
             Route::prefix('language')
             ->as('language.')
             ->group(function () {
-                Route::get('index',                             [LanguageController::class, 'index'])->name('index');
-                Route::get('create',                            [LanguageController::class, 'create'])->name('create');
-                Route::post('store',                            [LanguageController::class, 'store'])->name('store');
-                Route::get('edit/{language}',                   [LanguageController::class, 'edit'])->where(['id' => '[0-9]+'])->name('edit');
-                Route::put('udpate/{language}',                 [LanguageController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
-                Route::get('delete/{language}',                 [LanguageController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
-                Route::delete('destroy/{language}',             [LanguageController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
+                Route::get('index',                                 [LanguageController::class, 'index'])->name('index');
+                Route::get('create',                                [LanguageController::class, 'create'])->name('create');
+                Route::post('store',                                [LanguageController::class, 'store'])->name('store');
+                Route::get('edit/{language}',                       [LanguageController::class, 'edit'])->where(['id' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{language}',                     [LanguageController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{language}',                     [LanguageController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{language}',                 [LanguageController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
+                Route::get('switch/{language}',                     [LanguageController::class, 'swicthBackendLanguage'])->where(['id' => '[0-9]+'])->name('switch');
+                Route::get('translate/{id}/{languageId}/{model}',   [LanguageController::class, 'translate'])->where(['id' => '[0-9]+', 'languageId' => '[0-9]+'])->name('translate');
+                // Route::get('translate/{id}/{languageId}/{model}',   [LanguageController::class, 'translate'])->where(['id' => '[0-9]+', 'languageId' => '[0-9]+'])->name('translate');
+                Route::post('storeTranslate',                       [LanguageController::class, 'storeTranslate'])->name('storeTranslate');
             });
 
             Route::prefix('post_catalogue')
@@ -91,6 +111,18 @@ Route::prefix('admin')
                 Route::put('udpate/{post}',                     [PostController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
                 Route::get('delete/{post}',                     [PostController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
                 Route::delete('destroy/{post}',                 [PostController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
+            });
+
+            Route::prefix('generates')
+            ->as('generates.')
+            ->group(function (){
+                Route::get('index',                                  [GenerateController::class, 'index'])->name('index');
+                Route::get('create',                                 [GenerateController::class, 'create'])->name('create');
+                Route::post('store',                                 [GenerateController::class, 'store'])->name('store');
+                Route::get('edit/{generates}',                       [GenerateController::class, 'edit'])->where(['id' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{generates}',                     [GenerateController::class, 'udpate'])->where(['id' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{generates}',                     [GenerateController::class, 'delete'])->where(['id' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{generates}',                 [GenerateController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('destroy');
             });
 
         Route::get('ajax/location/getlocation',         [LocationController::class, 'getLocation'])->name('ajax.location.index');

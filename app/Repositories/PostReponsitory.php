@@ -83,7 +83,7 @@ class PostReponsitory extends BaseRepository implements PostReponsitoryInterface
         )->join('post_language as tb2', 'tb2.post_id', '=', 'posts.id')
         ->with('post_catalogues')
         ->where('tb2.language_id', '=', $language_id)
-        ->findOrFail($id);
+        ->find($id);
     }
 
 }

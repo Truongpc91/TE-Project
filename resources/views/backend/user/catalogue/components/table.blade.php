@@ -22,7 +22,7 @@
                         <span>{{ $user_catalogue->name }}</span>
                     </td>
                     <td>
-                        <span class="badge bg-success">{{ $user_catalogue->users_count }}  </span> người
+                        <span class="badge bg-success">{{ $user_catalogue->users_count }} </span> người
                     </td>
                     <td>
                         <span>{{ $user_catalogue->description }}</span>

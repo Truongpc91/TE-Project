@@ -1,13 +1,5 @@
 @include('backend.dashboard.components.breadcrumb', ['title' => $config['seo']['create']['title']])
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+@include('backend.dashboard.components.formError')
 @php
     $url =
         $config['method'] == 'create'

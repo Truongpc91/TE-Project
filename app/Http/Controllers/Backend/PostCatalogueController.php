@@ -39,8 +39,8 @@ class PostCatalogueController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('modules', 'admin.post_catalogue.index');
         $post_catalogues = $this->postCatalogueService->paginate($request);
-
         $config = [
             'js' => [
                 'backend/js/plugins/switchery/switchery.js',
@@ -51,8 +51,7 @@ class PostCatalogueController extends Controller
                 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
             ]
         ];
-
-        $config['seo'] = config('apps.postCatalogue');
+        $config['seo'] = __('messages.postCatalogue');
 
         $template = 'backend.post.catalogue.index';
 
@@ -61,7 +60,7 @@ class PostCatalogueController extends Controller
 
     public function create()
     {
-        // dd($user_catalogues);
+        $this->authorize('modules', 'admin.post_catalogue.create');
         $config = [
             'css' => [
                 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
@@ -76,7 +75,7 @@ class PostCatalogueController extends Controller
             ]
         ];
 
-        $config['seo'] = config('apps.postCatalogue');
+        $config['seo'] = __('messages.postCatalogue');
         $config['method'] = 'create';
         $dropdown = $this->nestedset->Dropdown();
         $template = 'backend.post.catalogue.store';
@@ -88,12 +87,7 @@ class PostCatalogueController extends Controller
     }
 
     public function store(StorePostCatalogueRequest $request)
-    {
-        // $data = $request->except('_token','send');
-
-        // $data['user_id'] = Auth::user()->id;
-        // dd($data);
-       
+    {    
         if ($this->postCatalogueService->create($request)) {
             return redirect()->route('admin.post_catalogue.index')->with('success', 'Thêm mới Post Catalogue thành công !');
         } else {
@@ -102,6 +96,7 @@ class PostCatalogueController extends Controller
     }
 
     public function edit(PostCatalogue $post_catalogue){
+        $this->authorize('modules', 'admin.post_catalogue.update');
 
         $postCatalogue = $this->postCatalogueReponsitory->getPostCatalogueById($post_catalogue->id, $this->language);
 
@@ -119,7 +114,7 @@ class PostCatalogueController extends Controller
             ]
         ];
 
-        $config['seo'] = config('apps.postCatalogue');
+        $config['seo'] = __('messages.postCatalogue');
         $config['method'] = 'edit';
         $dropdown = $this->nestedset->Dropdown();
         $template = 'backend.post.catalogue.store';
@@ -141,8 +136,9 @@ class PostCatalogueController extends Controller
     }
 
     public function delete(PostCatalogue $post_catalogue){
+        $this->authorize('modules', 'admin.post_catalogue.destroy');
         $template = 'backend.post.catalogue.delete';
-        $config['seo'] = config('apps.postCatalogue');
+        $config['seo'] = __('messages.postCatalogue');
 
         $postCatalogue = $this->postCatalogueReponsitory->getPostCatalogueById($post_catalogue->id, $this->language);
 

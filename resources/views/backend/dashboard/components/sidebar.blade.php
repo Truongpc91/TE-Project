@@ -31,7 +31,7 @@
             {{-- @php
                 $i = 0;
             @endphp --}}
-            @foreach (config('apps.module.module') as $item => $value)
+            @foreach (__('sidebar.module') as $item => $value)
             {{-- @php
                 $i ++;
             @endphp --}}

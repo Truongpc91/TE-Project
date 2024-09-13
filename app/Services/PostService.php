@@ -6,7 +6,7 @@ use App\Models\Post;
 use App\Repositories\Interfaces\PostReponsitoryInterface as postRepository;
 use App\Services\BaseService;
 use App\Services\Interfaces\PostServiceInterface;
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -29,44 +29,73 @@ class PostService extends BaseService implements PostServiceInterface
     {
         $this->postRepository = $postRepository;
         $this->nestedset = $nestedset;
-        $this->language = $this->currenLanguage();
     }
 
-    public function paginate($request)
+    public function paginate($request, $languageId)
     {
-        $condition['keyword'] = addslashes($request->input('keyword'));
-        $condition['publish'] = $request->integer('publish');
-        $condition['post_catalogue_id'] = $request->input('post_catalogue_id');
-        $condition['where'] = [
-            ['tb2.language_id', '=', $this->language],
-            ['tb2.language_id', '=', $this->language]
+        // $condition['keyword'] = addslashes($request->input('keyword'));
+        // $condition['publish'] = $request->integer('publish');
+        // $condition['post_catalogue_id'] = $request->input('post_catalogue_id');
+        // $condition['where'] = [
+        //     ['tb2.language_id', '=', $languageId],
+        // ];
+        // $perPage = addslashes($request->integer('per_page'));
+
+        // $posts = $this->postRepository->pagination(
+        //     ['*'],
+        //     $condition,
+        //     $perPage,
+        //     ['path' => 'admin/posts/index'],
+        //     ['posts.id', 'DESC'],
+        //     [
+        //         ['post_language as tb2', 'tb2.post_id', '=', 'id'],
+        //         ['post_catalogue_post as tb3', 'posts.id', '=', 'tb3.post_id']
+        //     ],
+        //     ['post_catalogues'],
+        //     $this->whereRaw($request, $languageId),
+        // );
+        // return $posts;
+        $perPage = $request->integer('perpage');
+        $condition = [
+            'keyword' => ($request->input('keyword')) ? addslashes($request->input('keyword')) : '',
+            'publish' => $request->integer('publish'),
+            'where' => [
+                ['tb2.language_id', '=', $languageId],
+            ],
         ];
-        $perPage = addslashes($request->integer('per_page'));
-        
+        $paginationConfig = [
+            'path' => 'post.index',
+            'groupBy' => $this->paginateSelect()
+        ];
+        $orderBy = ['posts.id', 'DESC'];
+        $relations = ['post_catalogues'];
+        $rawQuery = $this->whereRaw($request, $languageId);
+        // dd($rawQuery);
+        $joins = [
+            ['post_language as tb2', 'tb2.post_id', '=', 'posts.id'],
+            ['post_catalogue_post as tb3', 'posts.id', '=', 'tb3.post_id'],
+        ];
+
         $posts = $this->postRepository->pagination(
-            ['*'],
+            $this->paginateSelect(),
             $condition,
             $perPage,
-            ['path' => 'admin/posts/index'],
-            ['posts.id', 'DESC'],
-            [
-                ['post_language as tb2', 'tb2.post_id', '=', 'id'],
-                ['post_catalogue_post as tb3', 'posts.id', '=', 'tb3.post_id']
-            ],
-            ['post_catalogues'],
-            $this->whereRaw($request, $this->language),
+            $paginationConfig,
+            $orderBy,
+            $joins,
+            $relations,
+            $rawQuery
         );
-
         return $posts;
     }
 
-    public function create($data)
+    public function create($data, $languageId)
     {
         DB::beginTransaction();
         try {
             $post = $this->createPost($data);
             if ($post->id > 0) {
-                $this->createLanguageForPost($post, $data);
+                $this->createLanguageForPost($post, $data, $languageId);
                 $this->createCatalogueForPost($post, $data);
             }
             DB::commit();
@@ -79,12 +108,12 @@ class PostService extends BaseService implements PostServiceInterface
         }
     }
 
-    public function update($request, $post)
+    public function update($request, $post, $languageId)
     {
         DB::beginTransaction();
         try {
             if ($this->uploadPost($post, $request)) {
-                $this->updateLanguageForPost($post, $request);
+                $this->updateLanguageForPost($post, $request, $languageId);
                 $this->updateCatalogueForPost($post, $request);
             }
             DB::commit();
@@ -115,7 +144,7 @@ class PostService extends BaseService implements PostServiceInterface
     public function updateStatus($post = [])
     {
         DB::beginTransaction();
-        try { 
+        try {
             $payload[$post['field']] = (($post['value'] == 1) ? 2 : 1);
             $post = Post::find($post['modelId']);
             $updatePost = $this->postRepository->update($post, $payload);
@@ -145,9 +174,10 @@ class PostService extends BaseService implements PostServiceInterface
         }
     }
 
-    private function whereRaw($request, $languageId){
+    private function whereRaw($request, $languageId)
+    {
         $rawCondition = [];
-        if($request->integer('post_catalogue_id') > 0){
+        if ($request->integer('post_catalogue_id') > 0) {
             $rawCondition['whereRaw'] =  [
                 [
                     'tb3.post_catalogue_id IN (
@@ -156,12 +186,11 @@ class PostService extends BaseService implements PostServiceInterface
                         JOIN post_catalogue_language ON post_catalogues.id = post_catalogue_language.post_catalogue_id
                         WHERE lft >= (SELECT lft FROM post_catalogues as pc WHERE pc.id = ?)
                         AND rgt <= (SELECT rgt FROM post_catalogues as pc WHERE pc.id = ?)
-                        AND post_catalogue_language.language_id = '.$languageId.'
+                        AND post_catalogue_language.language_id = ' . $languageId . '
                     )',
                     [$request->integer('post_catalogue_id'), $request->integer('post_catalogue_id')]
                 ]
             ];
-            
         }
         return $rawCondition;
     }
@@ -177,11 +206,11 @@ class PostService extends BaseService implements PostServiceInterface
         return $post = $this->postRepository->create($payload);
     }
 
-    private function createLanguageForPost($post, $request)
+    private function createLanguageForPost($post, $request, $languageId)
     {
         $payload = $request->only($this->payloadLanguage());
         $payload['canonical'] = Str::slug($payload['canonical']);
-        $payload['language_id'] = $this->currenLanguage();
+        $payload['language_id'] = $languageId;
         $payload['post_id'] = $post->id;
 
         return  $this->postRepository->createPivot($post, $payload, 'languages');
@@ -210,15 +239,14 @@ class PostService extends BaseService implements PostServiceInterface
         return $flag = $this->postRepository->update($post, $payload);
     }
 
-    private function updateLanguageForPost($post, $request)
+    private function updateLanguageForPost($post, $request, $languageId)
     {
         $payload = $request->only($this->payloadLanguage());
         $payload['canonical'] = Str::slug($request['canonical']);
-        $payload['language_id'] = $this->currenLanguage();
+        $payload['language_id'] = $languageId;
         $payload['post_id'] = $post->id;
         $post->languages()->detach([$payload['language_id'], $post->id]);
 
-        // dd($post->languages()->detach([$payload['language_id'], $post->id]));
         return $this->postRepository->createPivot($post, $payload, 'languages');
     }
 
@@ -246,6 +274,18 @@ class PostService extends BaseService implements PostServiceInterface
             'order',
             'user_id',
             'post_catalogue_id',
+        ];
+    }
+
+    private function paginateSelect()
+    {
+        return [
+            'posts.id',
+            'posts.publish',
+            'posts.image',
+            'posts.order',
+            'tb2.name',
+            'tb2.canonical',
         ];
     }
 }

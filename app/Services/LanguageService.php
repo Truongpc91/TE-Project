@@ -24,21 +24,24 @@ class LanguageService implements LanguageServiceInterface
     public function paginate($request)
     {
         // dd(123);
-
         $condition['keyword'] = addslashes($request->input('keyword'));
         $condition['publish'] = $request->integer('publish');
+       
         $perPage = addslashes($request->integer('per_page'));
 
-        $userCatalogues = $this->languageRepository->pagination(
+        $languages = $this->languageRepository->pagination(
             ['*'],
             $condition,
             $perPage,
-            ['path' => 'admin/language/index'],
-            );
+            ['path' => 'admin/post_catalogue/index'],
+            ['id','ASC',],
+            [],
+            [],
+        );
            
-        // dd($userCatalogues);
+        // dd($languages);
 
-        return $userCatalogues;
+        return $languages;
     }
 
     public function create($data)
@@ -60,6 +63,8 @@ class LanguageService implements LanguageServiceInterface
     {
         DB::beginTransaction();
         try {
+            // dd($data, $language);
+
             $updateUserCatalogue = $this->languageRepository->update($language, $data);
             DB::commit();
             return true;
@@ -84,6 +89,28 @@ class LanguageService implements LanguageServiceInterface
             die();
             return false;
         }
+    }
+
+    public function switch($language){
+        DB::beginTransaction();
+        try {
+            $updateLanguage= $this->languageRepository->update($language, ['current' => 1]);
+
+            $payload = ['current' => 0];
+            $where = [
+                ['id', '!=', $language->id],
+            ];
+            $this->languageRepository->updateByWhere($where, $payload);
+
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage();
+            die();
+            return false;
+        }
+      
     }
 
     public function updateStatus($post = [])
@@ -118,6 +145,47 @@ class LanguageService implements LanguageServiceInterface
             die();
             return false;
         }
+    }
+
+    public function saveTranslate($option, $request){
+        DB::beginTransaction();
+        try{
+            $payload = [
+                'name' => $request->input('translate_name'),
+                'description' => $request->input('translate_description'),
+                'content' => $request->input('translate_content'),
+                'meta_title' => $request->input('translate_meta_title'),
+                'meta_keyword' => $request->input('translate_meta_keyword'),
+                'meta_description' => $request->input('translate_meta_description'),
+                'canonical' => $request->input('translate_canonical'),
+                $this->converModelToField($option['model']) => $option['id'],
+                'language_id' => $option['languageId']
+            ];
+            // dd($payload);
+            $controllerName = $option['model'].'Controller';
+            $repositoryNamespace = '\App\Repositories\\' . ucfirst($option['model']) . 'Reponsitory';
+
+            if (class_exists($repositoryNamespace)) {
+                $repositoryInstance = app($repositoryNamespace);
+            }
+
+            $model = $repositoryInstance->findById($option['id']);
+
+            $model->languages()->detach([$option['languageId'], $model->id]);
+            $repositoryInstance->createPivot($model, $payload,'languages');
+
+            DB::commit();
+            return true;
+        }catch(\Exception $e ){
+            DB::rollBack();
+            echo $e->getMessage();die();
+            return false;
+        }
+    }
+
+    private function converModelToField($model){
+        $temp = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $model));
+        return $temp.'_id';
     }
 
 }

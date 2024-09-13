@@ -5,15 +5,12 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Services\Interfaces\PostServiceInterface as PostService;
 use App\Repositories\Interfaces\PostReponsitoryInterface as PostReponsitory;
-use App\Repositories\Interfaces\LanguageReponsitoryInterface as languageReponsitory;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
-use App\Http\Requests\DeletePostRequest;
 
 use App\Models\Post;
 use App\Models\Language;
@@ -28,26 +25,38 @@ class PostController extends Controller
     protected $postReponsitory;
     protected $nestedset;
     protected $language;
-    protected $languageReponsitory;
 
-    public function __construct(PostService $postService, PostReponsitory $postReponsitory, Nestedsetbie $nestedset, languageReponsitory $languageReponsitory)
-    {
+    public function __construct(
+        PostService $postService,
+        PostReponsitory $postReponsitory,
+    ){
+        $this->middleware(function($request, $next){
+            $locale = app()->getLocale(); // vn en cn
+            $language = Language::where('canonical', $locale)->first();
+            $this->language = $language->id;
+            $this->initialize();
+            return $next($request);
+        });
+
         $this->postService = $postService;
         $this->postReponsitory = $postReponsitory;
+        $this->initialize();
+    }
+
+    private function initialize(){
         $this->nestedset = new Nestedsetbie([
             'table' => 'post_catalogues',
             'foreignkey' => 'post_catalogue_id',
-            'language_id' =>  1,
+            'language_id' =>  $this->language,
         ]);
-        $this->language = $this->currentLanguage();
-        $this->languageReponsitory = $this->languageReponsitory;
-    }
+    } 
 
     public function index(Request $request)
     {
-        $posts = $this->postService->paginate($request);
+        // dd($this->language);
 
-
+        $this->authorize('modules', 'admin.posts.index');
+        $posts = $this->postService->paginate($request, $this->language);
         $config = [
             'js' => [
                 'backend/js/plugins/switchery/switchery.js',
@@ -60,21 +69,20 @@ class PostController extends Controller
         ];
 
         $config['model'] = 'Post';
-        $config['seo'] = config('apps.post');
+        $config['seo'] = __('messages.post');
         $dropDown = $this->nestedset->Dropdown();
         $template = 'backend.post.post.index';
-        $languages = Language::all();
-        // dd($language);
-        // dd($posts);
+
         return view('backend.dashboard.layout', compact(
-            'template', 'config', 'posts', 'dropDown','languages'
+            'template', 'config', 'posts', 'dropDown'
             )
         );
     }
 
     public function create()
     {
-        // dd($user_s);
+        $this->authorize('modules', 'admin.posts.create');
+
         $config = [
             'css' => [
                 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
@@ -89,7 +97,7 @@ class PostController extends Controller
             ]
         ];
 
-        $config['seo'] = config('apps.post');
+        $config['seo'] = __('messages.post');
         $config['method'] = 'create';
         $dropdown = $this->nestedset->Dropdown();
         $template = 'backend.post.post.store';
@@ -115,7 +123,8 @@ class PostController extends Controller
     }
 
     public function edit(Post $post){
-        // dd($post_->id);
+        $this->authorize('modules', 'admin.posts.update');
+
         $post = $this->postReponsitory->getPostById($post->id, $this->language);
         
         $config = [
@@ -132,7 +141,7 @@ class PostController extends Controller
             ]
         ];
 
-        $config['seo'] = config('apps.post');
+        $config['seo'] = __('messages.post');
         $config['method'] = 'edit';
         $dropdown = $this->nestedset->Dropdown();
         $template = 'backend.post.post.store';
@@ -145,9 +154,6 @@ class PostController extends Controller
     }
 
     public function udpate(UpdatePostRequest $request, Post $post){
-        // echo 123;die();
-        // dd($request);
-       
         if ($this->postService->update($request, $post)) {
             return redirect()->route('admin.posts.index')->with('success', 'Cập nhật Post thành công !');
         } else {
@@ -156,8 +162,9 @@ class PostController extends Controller
     }
 
     public function delete(Post $post){
+        $this->authorize('modules', 'admin.posts.destroy');
         $template = 'backend.post.post.delete';
-        $config['seo'] = config('apps.post');
+        $config['seo'] = __('messages.post');
 
         $post = $this->postReponsitory->getPostById($post->id, $this->language);
 

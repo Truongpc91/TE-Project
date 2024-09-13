@@ -25,7 +25,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-sm-8 ">
+                    <div class="col-sm-6">
                         <div class="row">
                             <div class="col-sm-10">
                                 <input 
@@ -41,10 +41,13 @@
                                     class="btn btn-primary mb10 btn-sm"> Tìm kiếm</button>
                             </div>
                         </div>
-                        {{-- <div class="col-sm-2">
-                            <button type="submit" name="search" value="search"
-                                class="btn btn-primary mb10 btn-sm"> Tìm kiếm</button>
-                        </div> --}}
+                    </div>
+                    <div class="col-sm-1" style="padding-left:40px">
+                        <div class="row">
+                            <div class="col-sm-2">
+                               <a href="{{ route('admin.user_catalogue.permission') }}" class="btn btn-warning"><i class="fa fa-key"></i> Phân quyền</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

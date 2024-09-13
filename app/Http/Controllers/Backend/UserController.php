@@ -32,7 +32,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-
+        $this->authorize('modules', 'admin.users.index');
         $users = $this->UserService->paginate($request);
         // $users = User::paginate(1);
 
@@ -57,6 +57,8 @@ class UserController extends Controller
 
     public function create()
     {
+        $this->authorize('modules', 'admin.users.create');
+
         $provinces = $this->provinceReponsitory->all();
         $user_catalogues = $this->userCatalogueReponsitory->all();
         // dd($user_catalogues);
@@ -83,12 +85,13 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
+
         $data = $request->except('_token');
 
         if ($request->hasFile('image')) {
             $data['image'] = Storage::put(self::PATH_UPLOAD, $request->file('image'));
         }
-       
+
         if ($this->UserService->create($data)) {
             return redirect()->route('admin.users.index')->with('success', 'Thêm mới User thành công !');
         } else {
@@ -96,8 +99,10 @@ class UserController extends Controller
         }
     }
 
-    public function edit(User $user){
-        // dd($user);
+    public function edit(User $user)
+    {
+        $this->authorize('modules', 'admin.users.update');
+
         $provinces = $this->provinceReponsitory->all();
         $user_catalogues = $this->userCatalogueReponsitory->all();
         // dd($provinces);
@@ -123,7 +128,8 @@ class UserController extends Controller
         ));
     }
 
-    public function udpate(UpdateUserRequest $request, User $user){
+    public function udpate(UpdateUserRequest $request, User $user)
+    {
 
         $data = $request->except('_token', 'send', '_method');
         $data['password'] = $user->password;
@@ -136,18 +142,21 @@ class UserController extends Controller
 
         $currentImage = $user->image;
 
-        if($request->hasFile('image') && $currentImage && Storage::exists($currentImage)){
+        if ($request->hasFile('image') && $currentImage && Storage::exists($currentImage)) {
             Storage::delete($currentImage);
         }
-       
-        if ($this->UserService->update($data,$user)) {
+
+        if ($this->UserService->update($data, $user)) {
             return redirect()->route('admin.users.index')->with('success', 'Cập nhật User thành công !');
         } else {
             return redirect()->route('admin.users.index')->with('error', 'Cập nhật User thất bại! Hãy thử lại');
         }
     }
 
-    public function delete(User $user){
+    public function delete(User $user)
+    {
+        $this->authorize('modules', 'admin.users.destroy');
+
         $template = 'backend.user.user.delete';
         $config['seo'] = config('apps.user');
 
@@ -158,13 +167,14 @@ class UserController extends Controller
         ));
     }
 
-    public function destroy(User $user){
+    public function destroy(User $user)
+    {
         $currentImage = $user->image;
 
-        if($currentImage && Storage::exists($currentImage)){
+        if ($currentImage && Storage::exists($currentImage)) {
             Storage::delete($currentImage);
         }
-       
+
         if ($this->UserService->destroy($user)) {
             return redirect()->route('admin.users.index')->with('success', 'Xóa User thành công !');
         } else {

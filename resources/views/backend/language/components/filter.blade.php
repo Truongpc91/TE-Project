@@ -41,10 +41,6 @@
                                     class="btn btn-primary mb10 btn-sm"> Tìm kiếm</button>
                             </div>
                         </div>
-                        {{-- <div class="col-sm-2">
-                            <button type="submit" name="search" value="search"
-                                class="btn btn-primary mb10 btn-sm"> Tìm kiếm</button>
-                        </div> --}}
                     </div>
                 </div>
             </div>

@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateUserCatalogueRequest;
 use App\Models\UserCatalogue;
 use Illuminate\Http\Request;
 use App\Services\Interfaces\UserCatalogueServiceInterface as UserCatalogueService;
+use App\Repositories\Interfaces\UserCatalogueRepositoryInterface as UserCatalogueRepository;
+use App\Repositories\Interfaces\PermissionReponsitoryInterface as PermissionReponsitory;
 use Illuminate\Support\Facades\Storage;
 
 class UserCatalogueController extends Controller
@@ -15,14 +17,22 @@ class UserCatalogueController extends Controller
     const PATH_UPLOAD = 'user_catalogues';
 
     protected $UserCatalogueService;
+    protected $UserCatalogueRepository;
+    protected $PermissionReponsitory;
 
-    public function __construct(UserCatalogueService $UserCatalogueService)
-    {
+    public function __construct(
+        UserCatalogueService $UserCatalogueService,
+        UserCatalogueRepository $UserCatalogueRepository,
+        PermissionReponsitory $PermissionReponsitory
+    ){
         $this->UserCatalogueService = $UserCatalogueService;
+        $this->UserCatalogueRepository = $UserCatalogueRepository;
+        $this->PermissionReponsitory = $PermissionReponsitory;
     }
 
     public function index(Request $request)
     {
+        $this->authorize('modules', 'admin.user_catalogue.index');
 
         $user_catalogues = $this->UserCatalogueService->paginate($request);
 
@@ -49,6 +59,7 @@ class UserCatalogueController extends Controller
 
     public function create()
     {
+        $this->authorize('modules', 'admin.user_catalogue.create');
         $config['seo'] = config('apps.userCatalogue');
         $config['method'] = 'create';
         $template = 'backend.user.catalogue.store';
@@ -72,7 +83,8 @@ class UserCatalogueController extends Controller
     }
 
     public function edit(UserCatalogue $user_catalogue){
-        // dd($provinces);
+        $this->authorize('modules', 'admin.user_catalogue.update');
+
         $config = [
             'css' => [
                 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
@@ -105,6 +117,7 @@ class UserCatalogueController extends Controller
     }
 
     public function delete(UserCatalogue $user_catalogue){
+        $this->authorize('modules', 'admin.user_catalogue.destroy');
         $template = 'backend.user.catalogue.delete';
         $config['seo'] = config('apps.userCatalogue');
 
@@ -122,5 +135,27 @@ class UserCatalogueController extends Controller
         } else {
             return redirect()->route('admin.user_catalogue.index')->with('error', 'Xóa UserCatalogue thất bại! Hãy thử lại');
         }
+    }
+
+    public function permission(){
+        // $this->authorize('modules', 'admin.user_catalogue.index');
+        $userCatalogues = $this->UserCatalogueRepository->all(['permissions']);
+        $permissions = $this->PermissionReponsitory->all();
+        $config['seo'] = __('messages.userCatalogue');
+        $template = 'backend.user.catalogue.permission';
+
+        return view('backend.dashboard.layout', compact(
+            'template',
+            'userCatalogues',
+            'config',
+            'permissions'
+        ));
+    }
+
+    public function updatePermission(Request $request){
+        if($this->UserCatalogueService->setPermission($request)){
+            return redirect()->route('admin.user_catalogue.index')->with('success','Cập nhật quyền thành công');
+        }
+        return redirect()->route('admin.user_catalogue.index')->with('error','Có vấn đề xảy ra, Hãy thử lại');
     }
 }

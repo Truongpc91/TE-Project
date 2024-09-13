@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Language;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -15,9 +16,12 @@ class DashboardController extends Controller
 
         $template = 'backend.dashboard.home.index';
 
+        $languages = Language::all();
+
         return view('backend.dashboard.layout', compact(
             'template',
-            'config'
+            'config',
+            'languages'
         ));
     }
 

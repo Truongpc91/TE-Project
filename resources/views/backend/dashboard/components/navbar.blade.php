@@ -10,18 +10,18 @@
             </form>
         </div>
         <ul class="nav navbar-top-links navbar-right">
-            {{-- @dd($language) --}}
-            @foreach ($languages as $language)
-                <li class="ml-2">
-                    <a href="">
-                        <img class="image img-cover language-item" src="{{ \Storage::url($language->image) }}"
+            {{-- @dd($languages) --}}
+            @foreach ($languages as $key => $val)
+                <li class="ml-2" {{ ($val->current == 1) ?  'style=background-color:#b7b7c5' : '' }} >
+                    <a href="{{ route('admin.language.switch', $val) }}">
+                        <img class="image img-cover language-item {{ ($val->current == 1) ?  'active' : '' }}" src="{{ \Storage::url($val->image) }}"
                             alt="" width="30">
                     </a>
                 </li>
             @endforeach
-            <li>
+            {{-- <li>
                 <span class="m-r-sm text-muted welcome-message language">Welcome to T-Ecommerce +</span>
-            </li>
+            </li> --}}
             <li class="dropdown">
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                     <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>

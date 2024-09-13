@@ -25,7 +25,7 @@
             <div class="col-lg-9">
                 <div class="ibox">
                     <div class="ibox-title">
-                        <h5>Thông tin chung</h5>
+                        <h5>{{ __('messages.tableHeading') }}</h5>
                     </div>
                     <div class="ibox-content">
                         @include('backend.post.catalogue.components.general')
@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="text-right mb15 button-fix">
-            <button type="submit" class="btn btn-primary" name="send" value="send">Lưu lại</button>
+            <button type="submit" class="btn btn-primary" name="send" value="send">{{ __('messages.save') }}</button>
         </div>
     </div>
 </form>

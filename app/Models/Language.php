@@ -15,7 +15,8 @@ class Language extends Model
         'canonical',
         'image',
         'user_id',
-        'publish'
+        'publish',
+        'current'
     ];
 
     protected $table = 'languages';
