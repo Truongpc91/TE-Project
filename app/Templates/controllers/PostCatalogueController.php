@@ -48,7 +48,7 @@ class {$class}CatalogueController extends Controller
     } 
  
     public function index(Request $request){
-        $this->authorize('modules', 'admin.{module}.catalogue.index');
+        $this->authorize('modules', 'admin.{module}_catalogue.index');
         ${module}Catalogues = $this->{module}CatalogueService->paginate($request, $this->language);
         $config = [
             'js' => [
@@ -71,7 +71,7 @@ class {$class}CatalogueController extends Controller
     }
 
     public function create(){
-        $this->authorize('modules', 'admin.{module}.catalogue.create');
+        $this->authorize('modules', 'admin.{module}_catalogue.create');
         $config = $this->configData();
         $config['seo'] = __('messages.{module}Catalogue');
         $config['method'] = 'create';
@@ -86,13 +86,13 @@ class {$class}CatalogueController extends Controller
 
     public function store(Store{$class}CatalogueRequest $request){
         if($this->{module}CatalogueService->create($request, $this->language)){
-            return redirect()->route('admin.{module}.catalogue.index')->with('success','Thêm mới bản ghi thành công');
+            return redirect()->route('admin.{module}_catalogue.index')->with('success','Thêm mới bản ghi thành công');
         }
-        return redirect()->route('admin.{module}.catalogue.index')->with('error','Thêm mới bản ghi không thành công. Hãy thử lại');
+        return redirect()->route('admin.{module}_catalogue.index')->with('error','Thêm mới bản ghi không thành công. Hãy thử lại');
     }
 
     public function edit($id){
-        $this->authorize('modules', 'admin.{module}.catalogue.update');
+        $this->authorize('modules', 'admin.{module}_catalogue.update');
         ${module}Catalogue = $this->{module}CatalogueReponsitory->get{$class}CatalogueById($id, $this->language);
         $config = $this->configData();
         $config['seo'] = __('messages.{module}Catalogue');
@@ -115,7 +115,7 @@ class {$class}CatalogueController extends Controller
     }
 
     public function delete($id){
-        $this->authorize('modules', 'admin.{module}.catalogue.destroy');
+        $this->authorize('modules', 'admin.{module}_catalogue.destroy');
         $config['seo'] = __('messages.{module}Catalogue');
         ${module}Catalogue = $this->{module}CatalogueReponsitory->get{$class}CatalogueById($id, $this->language);
         $template = 'backend.{module}.catalogue.delete';
@@ -128,9 +128,9 @@ class {$class}CatalogueController extends Controller
 
     public function destroy(Delete{$class}CatalogueRequest $request, $id){
         if($this->{module}CatalogueService->destroy($id, $this->language)){
-            return redirect()->route('admin.{module}.catalogue.index')->with('success','Xóa bản ghi thành công');
+            return redirect()->route('admin.{module}_catalogue.index')->with('success','Xóa bản ghi thành công');
         }
-        return redirect()->route('admin.{module}.catalogue.index')->with('error','Xóa bản ghi không thành công. Hãy thử lại');
+        return redirect()->route('admin.{module}_catalogue.index')->with('error','Xóa bản ghi không thành công. Hãy thử lại');
     }
 
     private function configData(){

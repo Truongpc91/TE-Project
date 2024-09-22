@@ -26,8 +26,8 @@
                     <input type="checkbox" value="{{ ${module}->publish }}" class="js-switch status " data-field="publish" data-model="{{ $config['model'] }}" {{ (${module}->publish == 2) ? 'checked' : '' }} data-modelId="{{ ${module}->id }}" />
                 </td>
                 <td class="text-center"> 
-                    <a href="{{ route('admin.{view}.edit', ${module}->id) }}" class="btn btn-success"><i class="fa fa-edit"></i></a>
-                    <a href="{{ route('admin.{view}.delete', ${module}->id) }}" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                    <a href="{{ route('admin.{view}.edit', ${module}) }}" class="btn btn-success"><i class="fa fa-edit"></i></a>
+                    <a href="{{ route('admin.{view}.delete', ${module}) }}" class="btn btn-danger"><i class="fa fa-trash"></i></a>
                 </td>
             </tr>
             @endforeach

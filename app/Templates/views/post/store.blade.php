@@ -1,10 +1,15 @@
-@include('backend.dashboard.component.breadcrumb', ['title' => $config['seo'][$config['method']]['title']])
-@include('backend.dashboard.component.formError')
+@include('backend.dashboard.components.breadcrumb', [
+    'title' => $config['seo'][$config['method']]['title'],
+])
+@include('backend.dashboard.components.formError')
 @php
-    $url = ($config['method'] == 'create') ? route('{module}.store') : route('{module}.update', ${module}->id);
+    $url = $config['method'] == 'create' ? route('admin.{module}.store') : route('admin.{module}.update', ${module});
 @endphp
-<form action="{{ $url }}" method="post" class="box">
+<form action="{{ $url }}" method="post" class="box" enctype="multipart/form-data">
     @csrf
+    @if ($config['method'] == 'edit')
+        @method('PUT')
+    @endif
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
             <div class="col-lg-9">
@@ -13,16 +18,16 @@
                         <h5>{{ __('messages.tableHeading') }}</h5>
                     </div>
                     <div class="ibox-content">
-                        @include('backend.dashboard.component.content', ['model' => (${module}) ?? null])
+                        @include('backend.dashboard.components.content', ['model' => ${module} ?? null])
                     </div>
                 </div>
-               @include('backend.dashboard.component.album')
-               @include('backend.dashboard.component.seo', ['model' => (${module}) ?? null])
+                {{-- @include('backend.dashboard.components.album') --}}
+                @include('backend.dashboard.components.seo', ['model' => ${module} ?? null])
             </div>
             <div class="col-lg-3">
-                @include('backend.{module}.{module}.component.aside')
+                @include('backend.{module}.{module}.components.aside')
             </div>
         </div>
-        @include('backend.dashboard.component.button')
+        @include('backend.dashboard.components.button')
     </div>
 </form>

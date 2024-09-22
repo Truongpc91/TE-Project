@@ -21,7 +21,15 @@ class ReponsitoryServiceProvider extends ServiceProvider
         'App\Repositories\Interfaces\GenerateReponsitoryInterface' => 'App\Repositories\GenerateReponsitory',
         'App\Repositories\Interfaces\PostReponsitoryInterface' => 'App\Repositories\PostReponsitory',
         'App\Repositories\Interfaces\ProvinceReponsitoryInterface' => 'App\Repositories\ProvinceReponsitory',
-        'App\Repositories\Interfaces\DistrictReponsitoryInterface' => 'App\Repositories\DistrictReponsitory'
+        'App\Repositories\Interfaces\DistrictReponsitoryInterface' => 'App\Repositories\DistrictReponsitory',
+        'App\Repositories\Interfaces\ProductCatalogueReponsitoryInterface' => 'App\Repositories\ProductCatalogueReponsitory',
+        'App\Repositories\Interfaces\ProductReponsitoryInterface' => 'App\Repositories\ProductReponsitory',
+        'App\Repositories\Interfaces\AttributeCatalogueReponsitoryInterface' => 'App\Repositories\AttributeCatalogueReponsitory',
+        'App\Repositories\Interfaces\AttributeReponsitoryInterface' => 'App\Repositories\AttributeReponsitory',
+        'App\Repositories\Interfaces\ProductVariantReponsitoryInterface' => 'App\Repositories\ProductVariantReponsitory',
+        'App\Repositories\Interfaces\ProductVariantLanguageReponsitoryInterface' => 'App\Repositories\ProductVariantLanguageReponsitory',
+        'App\Repositories\Interfaces\ProductVariantAttributeReponsitoryInterface' => 'App\Repositories\ProductVariantAttributeReponsitory',
+
     ];
     
     public function register(): void

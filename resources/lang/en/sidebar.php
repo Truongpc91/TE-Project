@@ -2,6 +2,30 @@
 return [
     'module' => [
         [
+            'title' => 'Products',
+            'icon' => 'fa fa-cube',
+            'name' => ['product','attribute'],
+            'subModule' => [
+                [
+                    'title' => 'Type Products',
+                    'route' => 'admin/product_catalogue/index'
+                ],
+                [
+                    'title' => ' Products',
+                    'route' => 'admin/product/index'
+                ],
+                [
+                    'title' => 'Type Attribute',
+                    'route' => 'attribute/catalogue/index'
+                ],
+                [
+                    'title' => 'Attributes',
+                    'route' => 'admin/attribute/index'
+                ],
+
+            ]
+        ],
+        [
             'title' => 'Article',
             'icon' => 'fa fa-file',
             'name' => ['post'],

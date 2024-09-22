@@ -6,6 +6,7 @@ use App\Repositories\Interfaces\GenerateReponsitoryInterface as generateReposito
 use App\Services\Interfaces\GenerateServiceInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Artisan;
 
 /**
  * Class UserService
@@ -46,16 +47,16 @@ class GenerateService implements GenerateServiceInterface
     {
         DB::beginTransaction();
         try {
-            // $database = $this->makeDatabase($data);
-            // $controller = $this->makeController($data);
-            // $this->makeModel($data);
-            // $this->makeReponsitory($data);
-            // $this->makeService($data);
-            // $this->makeProvider($data);
-            // $this->makeRequest($data);
-            $this->makeView($data);
-            // $this->makeRoutes($data);
-            // $this->makeRule($data);
+            $database   = $this->makeDatabase($data);
+            $controller = $this->makeController($data);
+            $model      = $this->makeModel($data);
+            $repository = $this->makeReponsitory($data);
+            $service    = $this->makeService($data);
+            $provider   = $this->makeProvider($data);
+            $request    = $this->makeRequest($data);
+            $view       = $this->makeView($data);
+            $routes     = $this->makeRoutes($data);
+            $rule       = $this->makeRule($data);
             // $this->makeLang();
 
             // $generate = $this->generateRepository->create($data);
@@ -102,15 +103,24 @@ class GenerateService implements GenerateServiceInterface
 
     private function makeDatabase($request)
     {
-        $payload = $request->only('schema', 'name','module_type');
-        $module = $this->convertModuleNameToTableName($payload['name']);
-        $moduleExtract = explode('_', $module);
-        $this->makeMainTable($request, $module, $payload);
-        if ($payload['module_type'] !== 'difference') {
-            $this->makeLanguageTable($request, $module);
-            if (count($moduleExtract) == 1) {
-                $this->makeRelationTable($request, $module);
+        try {
+            $payload = $request->only('schema', 'name', 'module_type');
+            $module = $this->convertModuleNameToTableName($payload['name']); //produc
+            $moduleExtract = explode('_', $module);
+            $this->makeMainTable($request, $module, $payload);
+            if ($payload['module_type'] !== 'difference') {
+                $this->makeLanguageTable($request, $module);
+                if (count($moduleExtract) == 1) {
+                    $this->makeRelationTable($request, $module);
+                }
             }
+            ARTISAN::call('migrate');
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage() . '-' . $e->getLine();
+            die();
+            return false;
         }
     }
 
@@ -249,7 +259,6 @@ class GenerateService implements GenerateServiceInterface
             'module' => lcfirst(current($module)),
         ];
         $newContent = $this->replaceContent($controllerContent, $replace);
-        dd($newContent);
 
         $controllerPath = base_path('app/Http/Controllers/Backend/' . $controllerName);
         FILE::put($controllerPath, $newContent);
@@ -307,7 +316,7 @@ class GenerateService implements GenerateServiceInterface
     private function createModelFile($modelName, $modelContent)
     {
         $modelPath = base_path('app/Models/' . $modelName);
-        // FILE::put($modelPath, $modelContent);
+        FILE::put($modelPath, $modelContent);
     }
 
     private function replaceContent($content, $replacement)
@@ -341,7 +350,7 @@ class GenerateService implements GenerateServiceInterface
             $newContent = $this->replaceContent($content, $replacement);
             $contentPath = ($key == 'Interfaces') ? base_path('app/Repositories/Interfaces/' . $name . 'ReponsitoryInterface.php') : base_path('app/Repositories/' . $name . 'Reponsitory.php');
             if (!FILE::exists($contentPath)) {
-                // FILE::put($contentPath, $newContent);
+                FILE::put($contentPath, $newContent);
             }
         }
     }
@@ -368,11 +377,10 @@ class GenerateService implements GenerateServiceInterface
             $newContent = $this->replaceContent($content, $replacement);
             $contentPath = ($key == 'Interfaces') ? base_path('app/Services/Interfaces/' . $name . 'ServiceInterface.php') : base_path('app/Services/' . $name . 'Service.php');
             if (!FILE::exists($contentPath)) {
-                // FILE::put($contentPath, $newContent);
+                FILE::put($contentPath, $newContent);
             }
         }
 
-        dd($newContent);
     }
 
     //* MAKE PROVIDERS
@@ -387,14 +395,14 @@ class GenerateService implements GenerateServiceInterface
 
         foreach ($provider as $key => $val) {
             $content = file_get_contents($val);
-            $insertLine = ($key == 'providerPath') ? "'App\\Services\\Interfaces\\{$name}ServiceInterface' => 'App\\Services\\{$name}Service'," : "'App\\Repositories\\Interfaces\\{$name}ReponsitoryInterface' => 'App\\Reponsitories\\{$name}Reponsitory',";
+            $insertLine = ($key == 'providerPath') ? "'App\\Services\\Interfaces\\{$name}ServiceInterface' => 'App\\Services\\{$name}Service'," : "'App\\Repositories\\Interfaces\\{$name}ReponsitoryInterface' => 'App\\Repositories\\{$name}Reponsitory',";
 
             $position = strpos($content, '];');
 
             if ($position !== false) {
                 $newContent = substr_replace($content, "    " . $insertLine . "\n" . '    ', $position, 0);
             }
-            // File::put($val, $newContent);
+            File::put($val, $newContent);
     
         }
     }
@@ -416,7 +424,7 @@ class GenerateService implements GenerateServiceInterface
             $requestContent = file_get_contents($requestPath);
             $requestContent = str_replace('{Module}', $name, $requestContent);
             $requestPut = base_path('app/Http/Requests/' . $requestArray[$key] . '.php');
-            // FILE::put($requestPut, $requestContent);
+            FILE::put($requestPut, $requestContent);
         }      
     }
 
@@ -435,9 +443,9 @@ class GenerateService implements GenerateServiceInterface
             $this->createDirectory($folderPath);
             $this->createDirectory($componentPath);
 
-
             $sourcePath = base_path('app/Templates/views/' . ((count($extractModule) == 2) ? 'catalogue' : 'post') . '/');
-            $viewPath = (count($extractModule) == 2) ? "{$extractModule[0]}.{$extractModule[1]}" : $extractModule[0];
+            $viewPath = (count($extractModule) == 2) ? "{$extractModule[0]}_{$extractModule[1]}" : $extractModule[0];
+ 
             $replacement = [
                 'view' => $viewPath,
                 'module' => lcfirst($name),
@@ -478,8 +486,6 @@ class GenerateService implements GenerateServiceInterface
                 FILE::put($destination, $content);
             }
         }
-
-        // dd($destination);
     }
 
 
@@ -492,7 +498,7 @@ class GenerateService implements GenerateServiceInterface
         $content = file_get_contents($ruleTemplate);
         $content = str_replace('{Module}', $name, $content);
         if (!FILE::exists($destination)) {
-            // FILE::put($destination, $content);
+            FILE::put($destination, $content);
         }
     }
 
@@ -528,9 +534,8 @@ class GenerateService implements GenerateServiceInterface
             //@@useController@@
         ROUTE;
 
-
         $content = str_replace('//@@new-module@@', $routeGroup, $content);
         $content = str_replace('//@@useController@@', $useController, $content);
-        // FILE::put($routesPath, $content);
+        FILE::put($routesPath, $content);
     }
 }

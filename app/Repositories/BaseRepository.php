@@ -48,6 +48,10 @@ class BaseRepository implements BaseRepositoryInterface
         return $model->fresh();
     }
 
+    public function createBatch(array $payload = []){       
+        return $this->model->insert($payload);
+    }
+
     public function update($model, $data){
         // dd($model, $data);
 
@@ -55,7 +59,7 @@ class BaseRepository implements BaseRepositoryInterface
     }
 
     public function updateByWhereIn(string $whereInField = '', array $whereIn = [], $data){
-        return $this->model->whereIn($whereInField,$whereIn)->update($data);
+        return $this->model->whereIn($whereInField, $whereIn)->update($data);
     }
 
     public function updateByWhere($condition = [], array $payload = []){
@@ -67,8 +71,8 @@ class BaseRepository implements BaseRepositoryInterface
         return $query->update($payload);
     }
 
-    public function destroy($user){
-        return $user->delete();
+    public function destroy($model){
+        return $model->delete();
     }
 
     public function all(array $relation = []){

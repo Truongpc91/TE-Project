@@ -1,5 +1,5 @@
-@include('backend.dashboard.component.breadcrumb', ['title' => $config['seo']['create']['title']])
-@include('backend.dashboard.component.formError')
-<form action="{{ route('{module}.destroy', ${module}->id) }}" method="post" class="box">
-   @include('backend.dashboard.component.destroy', ['model' => ${module}])
+@include('backend.dashboard.components.breadcrumb', ['title' => $config['seo']['create']['title']])
+@include('backend.dashboard.components.formError')
+<form action="{{ route('admin.{module}.destroy', ${module}) }}" method="post" class="box">
+   @include('backend.dashboard.components.destroy', ['model' => ${module}])
 </form>

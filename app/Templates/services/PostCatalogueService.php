@@ -192,6 +192,12 @@ class {$class}CatalogueService extends BaseService implements {$class}CatalogueS
             return false;
         }
     }
+
+    public function nestedset(){
+        $this->nestedset->Get('level ASC, order ASC');
+        $this->nestedset->Recursive(0, $this->nestedset->Set());
+        $this->nestedset->Action();
+    }
     
 
     private function paginateSelect(){

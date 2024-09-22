@@ -44,4 +44,4 @@
         </div>
     </div>
 </div>
-@include('backend.dashboard.component.publish', ['model' => (${module}) ?? null])
+@include('backend.dashboard.components.publish', ['model' => (${module}) ?? null])

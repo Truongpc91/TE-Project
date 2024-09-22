@@ -20,8 +20,6 @@ class {$class}CatalogueReponsitory extends BaseRepository implements {$class}Cat
         $this->model = $model;
     }
 
-    
-
     public function get{$class}CatalogueById(int $id = 0, $language_id = 0){
         return $this->model->select([
                 '{module}_catalogues.id',

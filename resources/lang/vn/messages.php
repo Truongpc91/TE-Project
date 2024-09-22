@@ -1,4 +1,4 @@
-<?php   
+<?php
 return [
     'galleryCatalogue' => [
         'index' => [
@@ -59,7 +59,6 @@ return [
         'delete' => [
             'title' => 'Xóa thuộc tính'
         ],
-    
     ],
     'product' => [
         'index' => [
@@ -126,7 +125,7 @@ return [
         ],
         'permission' => [
             'title' => 'Cập nhật quyền'
-        ],     
+        ],
     ],
     'permission' => [
         'index' => [
@@ -142,7 +141,7 @@ return [
         'delete' => [
             'title' => 'Xóa Quyền'
         ],
-        
+
     ],
     'generate' => [
         'index' => [
@@ -158,6 +157,16 @@ return [
         'delete' => [
             'title' => 'Xóa Module'
         ],
+    ],
+    'system' => [
+        'index' => [
+            'title' => 'Cấu hình chung',
+            'table' => 'Cấu hình chung'
+        ],
+        'create' => [
+            'title' => 'Cài đặt cấu hình hệ thống'
+        ],
+       
     ],
     'parent' => 'Chọn danh mục cha',
     'parentNotice' => 'Chọn Root nếu không có danh mục cha',
@@ -196,7 +205,7 @@ return [
     ],
     'follow' => [
         '1' => 'Follow',
-        '2' => 'Nofollow',  
+        '2' => 'Nofollow',
     ],
     'album' => [
         'heading' => 'Album Ảnh',
@@ -206,5 +215,5 @@ return [
     'generalTitle' => 'Thông tin chung',
     'generalDescription' => 'Bạn đang muốn xóa ngôn ngữ có tên là:
     Lưu ý: Không thể khôi phục dữ liệu sau khi xóa. Hãy chắc chắn bạn muốn thực hiện chức năng này',
-   
+
 ];

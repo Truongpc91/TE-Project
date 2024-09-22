@@ -1,7 +1,7 @@
 <form action="{{ route('admin.{view}.index') }}">
     <div class="filter-wrapper">
         <div class="uk-flex uk-flex-middle uk-flex-space-between">
-            @include('backend.dashboard.component.perpage')
+            @include('backend.dashboard.components.perpage')
             <div class="action">
                 <div class="uk-flex uk-flex-middle">
                     @include('backend.dashboard.components.filterPublish')

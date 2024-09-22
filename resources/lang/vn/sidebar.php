@@ -8,19 +8,19 @@ return [
             'subModule' => [
                 [
                     'title' => 'QL Nhóm sản phẩm',
-                    'route' => 'product/catalogue/index'
+                    'route' => 'admin/product_catalogue/index'
                 ],
                 [
                     'title' => 'QL sản phẩm',
-                    'route' => 'product/index'
+                    'route' => 'admin/product/index'
                 ],
                 [
                     'title' => 'QL Loại thuộc tính',
-                    'route' => 'attribute/catalogue/index'
+                    'route' => 'admin/attribute_catalogue/index'
                 ],
                 [
                     'title' => 'QL thuộc tính',
-                    'route' => 'attribute/index'
+                    'route' => 'admin/attribute/index'
                 ],
 
             ]
@@ -62,7 +62,7 @@ return [
         [
             'title' => 'Cấu hình chung',
             'icon' => 'fa fa-file',
-            'name' => ['language','generate'],
+            'name' => ['language','generate', 'system'],
             'subModule' => [
                 [
                     'title' => 'QL Ngôn ngữ',
@@ -72,7 +72,10 @@ return [
                     'title' => 'QL Module',
                     'route' => 'admin/generates/index'
                 ],
-                
+                [
+                    'title' => 'Cấu hình hệ thống',
+                    'route' => 'admin/system/index'
+                ],
             ]
         ]
     ],

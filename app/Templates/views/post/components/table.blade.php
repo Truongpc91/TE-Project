@@ -6,7 +6,7 @@
             <input type="checkbox" value="" id="checkAll" class="input-checkbox">
         </th>
         <th>{{ __('messages.tableName') }}</th>
-        @include('backend.dashboard.component.languageTh')
+        @include('backend.dashboard.components.languageTh')
         <th style="width:80px;" class="text-center">{{ __('messages.tableOrder') }}</th>
         <th class="text-center" style="width:100px;">{{ __('messages.tableStatus') }}</th>
         <th class="text-center" style="width:100px;">{{ __('messages.tableAction') }}</th>
@@ -22,7 +22,7 @@
                 <td>
                     <div class="uk-flex uk-flex-middle">
                         <div class="image mr5">
-                            <div class="img-cover image-{module}"><img src="{{ ${module}->image }}" alt=""></div>
+                            <div class="img-cover image-{module}"><img src="{{ \Storage::url(${module}->image) }}" alt=""></div>
                         </div>
                         <div class="main-info">
                             <div class="name"><span class="maintitle">{{ ${module}->name }}</span></div>
@@ -38,7 +38,7 @@
                         </div>
                     </div>
                 </td>
-                @include('backend.dashboard.component.languageTd', ['model' => ${module}, 'modeling' => '{Module}'])
+                @include('backend.dashboard.components.languageTd', ['model' => ${module}, 'modeling' => '{Module}'])
                 <td>
                     <input type="text" name="order" value="{{ ${module}->order }}" class="form-control sort-order text-right" data-id="{{ ${module}->id }}" data-model="{{ $config['model'] }}">
                 </td>
@@ -46,8 +46,8 @@
                     <input type="checkbox" value="{{ ${module}->publish }}" class="js-switch status " data-field="publish" data-model="{{ $config['model'] }}" {{ (${module}->publish == 2) ? 'checked' : '' }} data-modelId="{{ ${module}->id }}" />
                 </td>
                 <td class="text-center"> 
-                    <a href="{{ route('{module}.edit', ${module}->id) }}" class="btn btn-success"><i class="fa fa-edit"></i></a>
-                    <a href="{{ route('{module}.delete', ${module}->id) }}" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                    <a href="{{ route('admin.{module}.edit', ${module}) }}" class="btn btn-success"><i class="fa fa-edit"></i></a>
+                    <a href="{{ route('admin.{module}.delete', ${module}) }}" class="btn btn-danger"><i class="fa fa-trash"></i></a>
                 </td>
             </tr>
             @endforeach
