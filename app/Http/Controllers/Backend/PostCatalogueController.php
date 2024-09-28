@@ -32,7 +32,7 @@ class PostCatalogueController extends Controller
         $this->nestedset = new Nestedsetbie([
             'table' => 'post_catalogues',
             'foreignkey' => 'post_catalogue_id',
-            'language_id' =>  1,
+            'language_id' =>  3,
         ]);
         $this->language = $this->currentLanguage();
     }

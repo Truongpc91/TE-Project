@@ -60,6 +60,28 @@ return [
             ]
         ],
         [
+            'title' => 'QL Banner & Slide',
+            'icon' => 'fa fa-picture-o',
+            'name' => ['slide'],
+            'subModule' => [
+                [
+                    'title' => 'Quản lý Slide',
+                    'route' => 'admin/slide/index'
+                ],
+            ]
+        ],
+        [
+            'title' => 'QL Menu',
+            'icon' => 'fa fa-bars',
+            'name' => ['menu'],
+            'subModule' => [
+                [
+                    'title' => 'Cài đặt Menu',
+                    'route' => 'admin/menu/index'
+                ],
+            ]
+        ],
+        [
             'title' => 'Cấu hình chung',
             'icon' => 'fa fa-file',
             'name' => ['language','generate', 'system'],

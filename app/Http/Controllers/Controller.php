@@ -17,6 +17,6 @@ class Controller extends BaseController
     }
 
     public function currentLanguage(){
-        return 1;
+        return 3;
     }
 }

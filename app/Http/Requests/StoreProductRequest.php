@@ -23,7 +23,7 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'canonical' => 'required|unique:routes',
+            'canonical' => 'required|unique:routers',
         ];
     }
 

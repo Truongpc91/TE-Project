@@ -289,6 +289,7 @@
         let option = {
             'attributeCatalogueId' : object.attr('data-catid')
         }
+        
         $(object).select2({
             minimumInputLength: 2,
             placeholder: 'Nhập tối thiểu 2 kí tự để tìm kiếm',
@@ -644,8 +645,13 @@
             $('.selectVariant').each(function(){
                 let _this = $(this)
                 let attributeCatalogueId = _this.attr('data-catid')
+
+                console.log(attributeCatalogueId);
+                
                 
                 if(attribute != '') {
+                    // console.log(attribute);
+                    
                     $.get('http://shopprojectt.test/admin/ajax/attribute/loadAttribute', {
                         attribute: attribute,
                         attributeCatalogueId: attributeCatalogueId

@@ -7,7 +7,7 @@ use App\Models\ProductGallery;
 use App\Services\Interfaces\ProductServiceInterface;
 use App\Services\BaseService;
 use App\Repositories\Interfaces\ProductReponsitoryInterface as ProductReponsitory;
-// use App\Repositories\Interfaces\RouterReponsitoryInterface as RouterReponsitory;
+use App\Repositories\Interfaces\RouterRepositoryInterface as RouterReponsitory;
 use App\Repositories\Interfaces\ProductVariantLanguageReponsitoryInterface as ProductVariantLanguageReponsitory;
 use App\Repositories\Interfaces\ProductVariantAttributeReponsitoryInterface as ProductVariantAttributeReponsitory;
 
@@ -34,19 +34,20 @@ class ProductService extends BaseService implements ProductServiceInterface
 
     public function __construct(
         ProductReponsitory $productReponsitory,
-        // RouterReponsitory $routerReponsitory,
+        RouterReponsitory $routerReponsitory,
         ProductVariantLanguageReponsitory $productVariantLanguageReponsitory,
         ProductVariantAttributeReponsitory $productVariantAttributeReponsitory,
     ) {
         $this->productReponsitory = $productReponsitory;
         $this->productVariantLanguageReponsitory = $productVariantLanguageReponsitory;
         $this->productVariantAttributeReponsitory = $productVariantAttributeReponsitory;
-        // $this->routerReponsitory = $routerReponsitory;
+        $this->routerReponsitory = $routerReponsitory;
         $this->controllerName = 'ProductController';
     }
 
     public function paginate($request, $languageId)
     {
+        // dd($languageId);
         $perPage = $request->integer('perpage');
         $condition = [
             'keyword' => addslashes($request->input('keyword')),
@@ -62,7 +63,6 @@ class ProductService extends BaseService implements ProductServiceInterface
         $orderBy = ['products.id', 'DESC'];
         $relations = ['product_catalogues'];
         $rawQuery = $this->whereRaw($request, $languageId);
-        // dd($rawQuery);
         $joins = [
             ['product_language as tb2', 'tb2.product_id', '=', 'products.id'],
             ['product_catalogue_product as tb3', 'products.id', '=', 'tb3.product_id'],
@@ -78,23 +78,21 @@ class ProductService extends BaseService implements ProductServiceInterface
             $relations,
             $rawQuery
         );
-        // dd($products);
+       
         return $products;
     }
 
     public function create($request, $languageId)
     {
-        // dd($request);
         DB::beginTransaction();
         try {
             $product = $this->createProduct($request);
             if ($product->id > 0) {
                 $this->updateLanguageForProduct($product, $request, $languageId);
                 $this->updateCatalogueForProduct($product, $request);
-                // $this->createRouter($product, $request, $this->controllerName);
+                $this->createRouter($product, $request, $this->controllerName, $languageId);
                 $this->createVariant($product, $request, $languageId);
             }
-            // die();
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -115,11 +113,9 @@ class ProductService extends BaseService implements ProductServiceInterface
             if ($this->uploadProduct($product, $request)) {
                 $this->updateLanguageForProduct($product, $request, $languageId);
                 $this->updateCatalogueForProduct($product, $request);
-                // $this->updateRouter(
-                //     $product,  
-                //     $request,
-                //     $this->controllerName
-                // );
+                $this->updateRouter(
+                    $product, $request, $this->controllerName, $languageId
+                );
                 $product->product_variants()->each(function($variant){
                     $variant->languages()->detach();
                     $variant->attributes()->detach();

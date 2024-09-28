@@ -105,15 +105,16 @@ class ProductController extends Controller
     }
 
     public function edit($id){
+        // dd($id);
         $this->authorize('modules', 'admin.product.update');
         $attributeCatalogue = AttributeCatalogue::with('attribute_catalogue_language')->get();
         $product = $this->productReponsitory->getProductById($id, $this->language);
-        // dd($product);
+
         $config = $this->configData();
         $config['seo'] = __('messages.product');
         $config['method'] = 'edit';
         $dropdown  = $this->nestedset->Dropdown();
-        $album = json_decode($product->album);
+        // $album = json_decode($product->album);
         $template = 'backend.product.product.store';
         return view('backend.dashboard.layout', compact(
             'template',
@@ -121,7 +122,7 @@ class ProductController extends Controller
             'dropdown',
             'attributeCatalogue',
             'product',
-            'album',
+            // 'album',
         ));
     }
 

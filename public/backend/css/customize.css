@@ -360,3 +360,149 @@ input[name=canonical] {
   .int{
     text-align: right;
 }
+
+.menuContainer .setupSelect2 {
+    width: 100% !important;
+}
+
+#accordion .panel-title{
+    font-size: 13px;
+    margin: 0 !important;
+}
+
+#accordion .panel-title a{
+    display: block;
+    text-transform: uppercase;
+}
+
+.none {
+    display: none;
+}
+
+.create-children-menu {
+    position: absolute; 
+    top: 11px;
+    right: 11px;
+    z-index: 100;
+}
+
+.dd-handle {
+    position: relative;
+}
+
+#nestable2 .dd-item > button {
+    z-index: 9999;
+}
+
+.menu-name {
+    min-width: 90px;
+    width: 100px;
+}
+
+.menu-translate-item .form-row:not(:last-child){
+    margin-bottom: 10px;
+}
+
+.setting-item {
+    margin-bottom: 15px;
+}
+
+.setting-item .setting-text {
+    min-width: 120px;
+}
+
+.setting-item .setting-value {
+    display:flex;
+    justify-content:space-between;
+    position: relative;
+    width: 100%;
+}
+
+.setting-item .setting-value .form-control{
+    padding-right: 10px;
+}
+
+.setting-item .setting-value .px {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    font-size: 11px;
+    color: blue;
+}
+
+.setting-item .setting-value input[type=radio] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.setting-item .setting-value input[type=checkbox] {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.setting-item .setting-value label {
+    font-weight: normal;
+    margin-bottom: 0;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.nav-setting-item {
+    margin-bottom: 10px;
+}
+
+.ul-flex .uk-flex-middle{
+    display: flex;
+    justify-content: space-between;
+}
+
+.ibox .ibox-title h5{
+    margin-bottom: 0;
+}
+
+.ibox-title {
+    padding: 7px;
+}
+
+input[type=checkbox] {
+    margin: 0;
+}
+
+.form-row .overlay label {
+    font-weight: normal;
+    margin: 0 10px 0 0;
+}
+
+.form-row .overlay input[type=checkbox] {
+    width: 16px;
+    height: 16px;
+}
+
+.form-row-url{
+    padding-right: 160px;
+    position: relative;
+}
+
+.form-row .overlay {
+    position: absolute;
+    top: 5px;
+    right: 0;
+}
+
+.slide-image {
+    height: 174px;
+}
+
+.slide-seo-tab{
+    padding-right:0 !important;
+}
+
+.addSlide {
+    border: 1px solid #ccc;
+}
+
+.addSlide:hover{
+    background: #eaeaea;
+}

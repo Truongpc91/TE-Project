@@ -25,7 +25,7 @@ class UpdateProductRequest extends FormRequest
 
         return [
             'name' => 'required',
-            'canonical' => 'required|unique:routes,canonical, '.$this->id.',module_id',
+            'canonical' => 'required|unique:routers,canonical, '.$this->id.',module_id',
         ];
     }
 

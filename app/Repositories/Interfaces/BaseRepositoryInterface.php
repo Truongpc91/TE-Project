@@ -23,9 +23,15 @@ interface BaseRepositoryInterface
         array $relations = [],
     );
 
+    public function findByCondition($condition = [], $relation = [] ,$flag = false);
+
     public function updateByWhereIn(string $whereInField = '', array $whereIn = [], $data);
 
     public function createPivot($model, array $payload = [], string $relation = '');
 
     public function createBatch(array $payload = []);
+
+    public function updateOrInsert(array $payload = [], array $condition = []);
+
+    public function findByWhereHas(array $condition = [], string $relation = '',string $alias = '');
 }

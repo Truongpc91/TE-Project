@@ -42,7 +42,9 @@ class AttributeController extends Controller
 
     public function loadAttribute(Request $request)
     {
+        // dd($request);
         $payload['attribute'] = json_decode(base64_decode($request->input('attribute')), TRUE);
+        // dd($payload);
         $payload['attributeCatalogueId'] = $request->input('attributeCatalogueId');
         $attributeArray = $payload['attribute'][$payload['attributeCatalogueId']];
         $attributes = [];

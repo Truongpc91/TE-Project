@@ -110,12 +110,8 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request)
     {
-        // $data = $request->except('_token','send');
 
-        // $data['user_id'] = Auth::user()->id;
-        // dd($data);
-
-        if ($this->postService->create($request)) {
+        if ($this->postService->create($request, $this->language)) {
             return redirect()->route('admin.posts.index')->with('success', 'Thêm mới Post  thành công !');
         } else {
             return redirect()->route('admin.posts.index')->with('error', 'Thêm mới Post  thất bại! Hãy thử lại');

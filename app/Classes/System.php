@@ -15,18 +15,19 @@ class System
                 'brand'         => ['type' => 'text', 'label' => 'Tên thương hiệu'],
                 'slogan'        => ['type' => 'text', 'label' => 'Tên thương hiệu'],
                 'logo'          => ['type' => 'file', 'label' => 'Logo website', 'tittle' => 'Click vào ô phía dưới để upload ảnh Logo'],
-                'favicon'       => ['type' => 'file', 'label' => 'Logo website', 'tittle' => 'Click vào ô phía dưới để upload ảnh Logo'],
+                'favicon'       => ['type' => 'file', 'label' => 'Favicon', 'tittle' => 'Click vào ô phía dưới để upload ảnh Logo'],
                 'copyright'     => ['type' => 'text', 'label' => 'Copyright'],
                 'website' => [
-                'type' => 'select',
-                'label' => 'Tình trạng Website',
-                'options' => [
-                    'open' => 'Mở cửa',
-                    'close' => 'Website đang bảo trì'
-                ]
-            ]
+                    'type' => 'select',
+                    'label' => 'Tình trạng Website',
+                    'options' => [
+                        'open' => 'Mở cửa',
+                        'close' => 'Website đang bảo trì'
+                    ]
+                ],
+                'short_intro' => ['type' => 'editor', 'label' => 'Giới thiệu ngắn']
             ],
-            
+
         ];
 
         $data['contact'] = [
@@ -63,7 +64,7 @@ class System
                 'meta_description'    => ['type' => 'text', 'label' => 'Mô tả SEO'],
                 'meta_image'          => ['type' => 'file', 'label' => 'Ảnh SEO'],
             ],
-            
+
         ];
         return $data;
     }

@@ -1,9 +1,23 @@
 @include('backend.dashboard.components.breadcrumb', ['title' => $config['seo']['create']['title']])
-{{-- @dd($system) --}}
-<form action="" method="POST" class="box" enctype="multipart/form-data">
+@php
+    $url =
+        isset($config['method']) && $config['method'] == 'translate'
+            ? route('admin.system.saveTranslate', ['languageId' => $languageId])
+            : route('admin.system.store');
+@endphp
+<form action="{{ $url }}" method="POST" class="box" enctype="multipart/form-data">
     @csrf
     <div class="wrapper wrapper-content animated fadeInRight">
-        @foreach ($system as $key => $val)
+        @foreach ($languages as $language)
+            <td class="text-center">
+                <a class="" href="{{ route('admin.system.translate', ['languageId' => $language->id]) }}">
+                    <span style="padding: 20px"><img src="{{ \Storage::url($language->image) }}" alt=""
+                            width="30"></span>
+                </a>
+
+            </td>
+        @endforeach
+        @foreach ($systemConfig as $key => $val)
             <div class="row">
                 <div class="col-lg-5">
                     <div class="panel-head">
@@ -33,23 +47,28 @@
                                                 @switch($item['type'])
                                                     @case('text')
                                                         <input type="{{ $item['type'] }}" class="form-control"
-                                                            name="{{ $name }}" placeholder="" autocomplete="off"
-                                                            value="{{ old($name) }}">
+                                                            name="config[{{ $name }}]" placeholder="" autocomplete="off"
+                                                            value="{{ old($name, $system[$name] ?? '') }}">
                                                     @break
 
                                                     @case('file')
                                                         <input type="{{ $item['type'] }}" class="form-control"
-                                                            name="{{ $name }}" placeholder="" autocomplete="off"
-                                                            value="{{ old($name) }}">
+                                                            name="config[{{ $name }}]" placeholder=""
+                                                            autocomplete="off" value="{{ old($name, $system[$name] ?? '') }}">
                                                     @break
 
                                                     @case('textarea')
-                                                        <textarea class="form-control" name="{{ $name }}" placeholder="" a utocomplete="off"
-                                                            value="{{ old($name) }}" style="height: 100px"></textarea>
+                                                        <textarea class="form-control" name="config[{{ $name }}]" placeholder="" a utocomplete="off"
+                                                            style="height: 100px">{{ old($name, $system[$name] ?? '') }}</textarea>
                                                     @break
-                                                        
+
+                                                    @case('editor')
+                                                        <textarea class="ck-editor" name="config[{{ $name }}]" placeholder="" a utocomplete="off"
+                                                            id="{{ $name }}" style="height: 100px">{{ old($name, $system[$name] ?? '') }}</textarea>
+                                                    @break
+
                                                     @case('select')
-                                                        {!! renderSystemSelect($item, $name) !!}    
+                                                        {!! renderSystemSelect($item, $name, $system[$name] ?? '') !!}
                                                     @break
                                                 @endswitch
                                                 {{-- @if ($item['type'] == 'text' || $item['type'] == 'image')

@@ -34,9 +34,7 @@ class UserController extends Controller
     {
         $this->authorize('modules', 'admin.users.index');
         $users = $this->UserService->paginate($request);
-        // $users = User::paginate(1);
 
-        // dd($users);
         $config = [
             'js' => [
                 'backend/js/plugins/switchery/switchery.js',

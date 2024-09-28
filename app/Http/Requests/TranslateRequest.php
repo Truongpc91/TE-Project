@@ -31,7 +31,7 @@ class TranslateRequest extends FormRequest
                     $option = $this->input('option');
                     // dd($option);
 
-                    $exist = DB::table('routes')
+                    $exist = DB::table('routers')
                         ->where('canonical', $value)
                         ->where('language_id', '<>',$option['languageId'])
                         ->where('id', '<>', $option['id'])

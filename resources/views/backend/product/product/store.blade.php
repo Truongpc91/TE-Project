@@ -5,6 +5,7 @@
 @php
     $url = $config['method'] == 'create' ? route('admin.product.store') : route('admin.product.udpate', $product);
 @endphp
+
 <form action="{{ $url }}" method="post" class="box" enctype="multipart/form-data">
     @csrf
     @if ($config['method'] == 'edit')

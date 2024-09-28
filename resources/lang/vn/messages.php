@@ -168,6 +168,38 @@ return [
         ],
        
     ],
+
+    'slide' => [
+        'index' => [
+            'title' => 'Cài đặt Banner & Slide',
+            'table' => 'Cài đặt Banner & Slide'
+        ],
+        'create' => [
+            'title' => 'Thêm mới Slide'
+        ],
+       
+    ],
+
+    'menu' => [
+        'index' => [
+            'title' => 'Quản lý Menu',
+            'table' => 'Danh sách Menu',
+            
+        ],
+        'create' => [
+            'title'     => 'Thêm mới Menu',
+            'children'  => 'Cập nhật Menu con cho mục '
+        ],
+        'show' => [
+            'title' => 'Dah sách Menu'
+        ],
+        'delete' => [
+            'title'     => 'Xóa Menu',
+        ],
+        'translate' => [
+            'title'     => 'Tạo bản dịch {language} cho Menu',
+        ], 
+    ],
     'parent' => 'Chọn danh mục cha',
     'parentNotice' => 'Chọn Root nếu không có danh mục cha',
     'subparent' => 'Chọn danh mục phụ (nếu có)',

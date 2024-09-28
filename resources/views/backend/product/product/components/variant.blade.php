@@ -25,6 +25,7 @@
                 'attributeCatalogue',
                 isset($product->attributeCatalogue) ? json_decode($product->attributeCatalogue, true) : [],
             );
+            // dd($product->variant);
         @endphp
         <div class="variant-wrapper {{ count($variantCatalogue) ? '' : 'hidden' }}">
             <div class="row variant-container">
@@ -39,6 +40,7 @@
 
                 @if ($variantCatalogue && count($variantCatalogue))
                     @foreach ($variantCatalogue as $keyAttr => $valAttr)
+                    {{-- @dd($valAttr) --}}
                         <div class="row mb20 variant-item">
                             <div class="col-lg-3">
                                 <div class="attribute-catalogue">
@@ -109,4 +111,5 @@
 
     var attribute ='{{ base64_encode(json_encode(old('attribute', isset($product->attribute) ? json_decode($product->attribute, true) : []))) }}';
     var variant ='{{ base64_encode(json_encode(old('variant', isset($product->variant) ? json_decode($product->variant, true) : []))) }}';
+
 </script>

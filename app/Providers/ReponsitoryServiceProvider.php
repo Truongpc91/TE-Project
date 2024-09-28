@@ -29,7 +29,11 @@ class ReponsitoryServiceProvider extends ServiceProvider
         'App\Repositories\Interfaces\ProductVariantReponsitoryInterface' => 'App\Repositories\ProductVariantReponsitory',
         'App\Repositories\Interfaces\ProductVariantLanguageReponsitoryInterface' => 'App\Repositories\ProductVariantLanguageReponsitory',
         'App\Repositories\Interfaces\ProductVariantAttributeReponsitoryInterface' => 'App\Repositories\ProductVariantAttributeReponsitory',
-
+        'App\Repositories\Interfaces\SystemReponsitoryInterface' => 'App\Repositories\SystemReponsitory',
+        'App\Repositories\Interfaces\MenuReponsitoryInterface' => 'App\Repositories\MenuReponsitory',
+        'App\Repositories\Interfaces\MenuCatalogueReponsitoryInterface' => 'App\Repositories\MenuCatalogueReponsitory',
+        'App\Repositories\Interfaces\RouterRepositoryInterface' => 'App\Repositories\RouterRepository',
+        'App\Repositories\Interfaces\SlideRepositoryInterface' => 'App\Repositories\SlideRepository',
     ];
     
     public function register(): void

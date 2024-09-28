@@ -6,6 +6,7 @@ use App\Classes\Nestedsetbie;
 use App\Models\Language;
 use App\Models\PostCatalogue;
 use App\Repositories\Interfaces\PostCatalogueReponsitoryInterface as postCatalogueRepository;
+use App\Repositories\Interfaces\RouterRepositoryInterface as RouterReponsitory;
 use App\Services\Interfaces\PostCatalogueServiceInterface;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\Auth;
@@ -22,18 +23,24 @@ class PostCatalogueService extends BaseService implements PostCatalogueServiceIn
 {
     const PATH_UPLOAD = 'post_catalogues';
     protected $postCatalogueRepository;
+    protected $routerReponsitory;
     protected $nestedset;
     protected $language;
 
-    public function __construct(postCatalogueRepository $postCatalogueRepository, Nestedsetbie $nestedset)
-    {
+    public function __construct(
+        postCatalogueRepository $postCatalogueRepository,
+        RouterReponsitory $routerReponsitory,
+        Nestedsetbie $nestedset
+    ){
         $this->postCatalogueRepository = $postCatalogueRepository;
+        $this->routerReponsitory = $routerReponsitory;
         $this->nestedset = new Nestedsetbie([
             'table' => 'post_catalogues',
             'foreignkey' => 'post_catalogue_id',
             'language_id' =>  $this->currenLanguage(),
         ]);
         $this->language = $this->currenLanguage();
+        $this->controllerName = 'PostCatalogueController';
     }
 
     public function paginate($request)
@@ -86,16 +93,13 @@ class PostCatalogueService extends BaseService implements PostCatalogueServiceIn
                 $payload['image'] = Storage::put(self::PATH_UPLOAD, $data->file('image'));
             }
 
-            // dd($data);
-
             $postCatalogue = $this->postCatalogueRepository->create($payload);
             if ($postCatalogue->id > 0) {
                 $payloadLanguage = $data->only($this->payloadLanguage());
                 $payloadLanguage['canonical'] = Str::slug($payloadLanguage['canonical']);
                 $payloadLanguage['language_id'] = $this->currenLanguage();
                 $payloadLanguage['post_catalogue_id'] = $postCatalogue->id;
-
-                // dd($payloadLanguage);
+                $this->createRouter($postCatalogue, $data, $this->controllerName, $this->language);
 
                 $language = $this->postCatalogueRepository->createPivot($postCatalogue, $payloadLanguage,'languages');
 

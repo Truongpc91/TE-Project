@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Post;
 use App\Repositories\Interfaces\PostReponsitoryInterface as postRepository;
+use App\Repositories\Interfaces\RouterRepositoryInterface as RouterReponsitory;
 use App\Services\BaseService;
 use App\Services\Interfaces\PostServiceInterface;
 
@@ -22,39 +23,20 @@ class PostService extends BaseService implements PostServiceInterface
 {
     const PATH_UPLOAD = 'posts';
     protected $postRepository;
+    protected $routerReponsitory;
     protected $nestedset;
     protected $language;
 
-    public function __construct(postRepository $postRepository, Nestedsetbie $nestedset)
+    public function __construct(postRepository $postRepository, RouterReponsitory $routerReponsitory, Nestedsetbie $nestedset)
     {
         $this->postRepository = $postRepository;
+        $this->routerReponsitory = $routerReponsitory;
         $this->nestedset = $nestedset;
+        $this->controllerName = 'PostController';
     }
 
     public function paginate($request, $languageId)
     {
-        // $condition['keyword'] = addslashes($request->input('keyword'));
-        // $condition['publish'] = $request->integer('publish');
-        // $condition['post_catalogue_id'] = $request->input('post_catalogue_id');
-        // $condition['where'] = [
-        //     ['tb2.language_id', '=', $languageId],
-        // ];
-        // $perPage = addslashes($request->integer('per_page'));
-
-        // $posts = $this->postRepository->pagination(
-        //     ['*'],
-        //     $condition,
-        //     $perPage,
-        //     ['path' => 'admin/posts/index'],
-        //     ['posts.id', 'DESC'],
-        //     [
-        //         ['post_language as tb2', 'tb2.post_id', '=', 'id'],
-        //         ['post_catalogue_post as tb3', 'posts.id', '=', 'tb3.post_id']
-        //     ],
-        //     ['post_catalogues'],
-        //     $this->whereRaw($request, $languageId),
-        // );
-        // return $posts;
         $perPage = $request->integer('perpage');
         $condition = [
             'keyword' => ($request->input('keyword')) ? addslashes($request->input('keyword')) : '',
@@ -97,6 +79,7 @@ class PostService extends BaseService implements PostServiceInterface
             if ($post->id > 0) {
                 $this->createLanguageForPost($post, $data, $languageId);
                 $this->createCatalogueForPost($post, $data);
+                $this->createRouter($post, $data, $this->controllerName,  $languageId);
             }
             DB::commit();
             return true;
@@ -218,6 +201,7 @@ class PostService extends BaseService implements PostServiceInterface
 
     private function createCatalogueForPost($post, $request)
     {
+        // dd($post, $request);
         $post->post_catalogues()->sync($this->catalogue($request));
     }
 
