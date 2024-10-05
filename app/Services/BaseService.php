@@ -50,11 +50,17 @@ class BaseService implements BaseServiceInterface
         $payload = $this->formatRouterPayload($model, $request, $controllerName,  $languageId);
         $condition = [
             ['module_id','=', $model->id],
+            ['language_id','=', $languageId],
             ['controllers','=', 'App\Http\Controllers\Backend\\'.$controllerName],
         ];
         $router = $this->routerReponsitory->findByCondition($condition);
         $res = $this->routerReponsitory->update($router->id, $payload);
         
         return $res;
+    }
+
+    public function formatJson($request, $inputName)
+    {
+        return ($request->input($inputName) && !empty($request->input($inputName))) ? json_encode($request->input($inputName)) : '';
     }
 }

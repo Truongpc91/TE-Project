@@ -12,5 +12,4 @@ interface UserCatalogueRepositoryInterface
 
     public function create($data);
 
-    // public function update($data, $user);
 }

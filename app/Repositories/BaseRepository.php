@@ -44,7 +44,6 @@ class BaseRepository implements BaseRepositoryInterface
 
     public function create($data)
     {
-        // dd($data, $this->model);
         $model = $this->model->create($data);
         return $model->fresh();
     }
@@ -119,11 +118,20 @@ class BaseRepository implements BaseRepositoryInterface
         return $this->model->select($column)->with($relation)->findOrFail($modelId);
     }
 
-    public function findByCondition($condition = [], $flag = false, $relation = [], $orderBy = ['id', 'desc'])
-    {
+    public function findByCondition(
+        $condition = [],
+        $flag = false,
+        $relation = [],
+        $orderBy = ['id', 'desc'],
+        array $param = []
+    ) {
         $query = $this->model->newQuery();
         foreach ($condition as $key => $val) {
             $query->where($val[0], $val[1], $val[2]);
+        }
+
+        if(isset($param['whereIn'])){
+            $query->whereIn($param['whereInField'], $param['whereIn']);
         }
         $query->with($relation);
         $query->orderBy($orderBy[0], $orderBy[1]);
@@ -135,13 +143,26 @@ class BaseRepository implements BaseRepositoryInterface
         return $model->{$relation}()->attach($model->id, $payload);
     }
 
-    public function findByWhereHas(array $condition = [], string $relation = '',string $alias = '')
+    public function findByWhereHas(array $condition = [], string $relation = '', string $alias = '', $flag = false)
     {
         return $this->model->with('languages')->WhereHas($relation, function ($query) use ($condition, $alias) {
             foreach ($condition as $key => $val) {
-                $query->where($alias.'.'.$key, $val);
+                $query->where($alias . '.' . $key, $val);
             }
         })->first();
+    }
+
+    public function findWidgetItem(array $condition = [], string $alias = '', int $languageId = 3)
+    {
+        return $this->model->with([
+            'languages' => function ($query) use ($languageId) {
+                $query->where('language_id', '=', $languageId);
+            }
+        ])->WhereHas('languages', function ($query) use ($condition, $alias) {
+            foreach ($condition as $key => $val) {
+                $query->where($alias . '.' . $val[0], $val[1], $val[2]);
+            }
+        })->get();
     }
 
     // updatePivot($post, $payloadLanguage, 'languages')
@@ -152,4 +173,6 @@ class BaseRepository implements BaseRepositoryInterface
 
     //     return $model->languages()->attach($model->id, $payload);
     // }
+
+
 }

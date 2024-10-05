@@ -25,9 +25,9 @@
                 'attributeCatalogue',
                 isset($product->attributeCatalogue) ? json_decode($product->attributeCatalogue, true) : [],
             );
-            // dd($product->variant);
+            // dd($variantCatalogue);
         @endphp
-        <div class="variant-wrapper {{ count($variantCatalogue) ? '' : 'hidden' }}">
+        <div class="variant-wrapper {{ $variantCatalogue ? '' : 'hidden' }}">
             <div class="row variant-container">
                 <div class="col-lg-3">
                     <div class="attribute-title">Chọn thuộc tính</div>

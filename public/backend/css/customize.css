@@ -1,9 +1,18 @@
+.nav .metismenu li.active{
+    border-left: 6px solid #19aa8d;
+}
+
 .mb20{
     margin-bottom: 20px;
 }
 
 .mb10{
     margin-bottom: 10px;
+}
+
+.mt10 {
+    margin-top: 10px;
+
 }
 
 .mt20{
@@ -357,9 +366,9 @@ input[name=canonical] {
     padding:20px;
   }
 
-  .int{
+  /* .int{
     text-align: right;
-}
+} */
 
 .menuContainer .setupSelect2 {
     width: 100% !important;
@@ -493,6 +502,13 @@ input[type=checkbox] {
 
 .slide-image {
     height: 174px;
+    position: relative;
+}
+
+.deleteSlide {
+    position: absolute;
+    right: 10px;
+    top: 10px;
 }
 
 .slide-seo-tab{
@@ -505,4 +521,333 @@ input[type=checkbox] {
 
 .addSlide:hover{
     background: #eaeaea;
+}
+
+.widgetContent .row{
+    margin-bottom: 0 !important;
+}
+
+.labelText {
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.model-item label{
+    margin-bottom: 0;
+    font-weight: 400;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.model-item input{
+    margin: 0;
+}
+
+.search-model {
+    border-radius: 5px;
+    height: 42px;
+    padding-left: 35px;
+    font-size: 14px;
+    border: 1px solid #e3e9ed;
+    outline: 0;
+}
+
+.search-model-box {
+    position: relative;
+    margin-top: 10px;
+}
+
+.search-model-box .fa {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+}
+
+.search-result-item {
+    margin-top: 20px;
+}
+
+.search-result-item .image {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.search-result-item .text .name {
+    color: blue;
+}
+
+.search-result-item .deleted {
+    cursor: pointer;
+}
+
+.search-result-item:not(:last-child){
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e3e9ed;
+}
+
+.ajax-search-result {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    box-shadow: 0 3px 6px rgb(33 33 33 / 10%);
+    z-index: 100;
+    width: 100%;
+}
+
+.ajax-search-result button {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 15px 10px;
+}
+
+.ajax-search-result button:hover {
+    background: #eff9fd;
+}
+
+.form-date input{
+    padding-left: 30px;
+}
+
+.form-date {
+    position: relative;
+}
+
+.form-date span{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.form-date span > *{
+    color: #777;
+}
+
+.fix-label {
+    font-weight: normal;
+    margin: 0;
+    cursor: pointer;
+}
+
+.promotion-wrapper input[type=radio]{
+    margin: 0;
+}
+.promotion-wrapper input[type=radio],
+.promotion-wrapper input[type=checkbox]{
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+}
+
+.promotion-wrapper .select2-container--default {
+    width: 100% !important;
+}
+
+div.fix-label {
+    margin-bottom: 15px;
+}
+
+.wrapperConditionItem {
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+}
+
+.wrapper-condition {
+    margin-top: 20px;
+}
+
+.conditionLabel {
+    display: flex;
+    justify-content: space-between;
+}
+
+.conditionLabel .delete{
+    cursor: pointer;
+}
+
+.conditionLabel {
+    color: blue;
+    font-weight: bold;
+}
+
+.discountType .select2-container{
+    max-width: 120px !important;
+    margin-left: 10px;
+}
+
+.discountType .promotion {
+    display:flex;
+    justify-content:space-between;
+}
+
+.delete-some-item{
+    cursor: pointer;
+}
+
+.button-promotion{
+    padding: 10px 10px;
+}
+
+.btn-custom {
+    border-radius: 4px;
+}
+
+.errorLine td input{
+    border: 1px solid red;
+}
+
+.product-quantity {
+    width: 400px;
+    display: inline-block;
+    border: 1px solid #c4cdd5;
+    background-color: #fff;
+    padding: 9px 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    /* height: 40px; */
+}
+
+.product-quantity p {
+    margin: 0;
+}
+
+.product-quantity .boxSearchIcon .fa{
+    width: 24px;
+    height: 24px;
+    text-align: center;
+}
+
+.goods-item {
+    background: rgb(217, 237, 255);
+    border: 1px solid transparent;
+    margin-bottom: 8px;
+    text-align:center;
+    position: relative;
+    border-radius: 100px;
+    padding: 4px 10px;
+}
+
+.goods-item span {
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    width: 90%;
+}
+
+.goods-item button {
+    background: transparent;
+    position: absolute;
+    right: 0;
+    top: 2px;
+    border: 0;
+}
+
+.good-item button i {
+    width: 12px;
+    height: 12px;
+}
+
+.fixGrid6 {
+    max-width: 50%;
+    flex-grow: 0;
+    flex-basis: 50%;
+    width: auto;
+    height: auto;
+    padding-right: 5px;
+}
+
+.boxWrapper {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.boxWrapper p{
+    font-size: 13px;
+}
+
+.good-padding {
+    padding: 0 6px;
+}
+
+.modal-title {
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.search-object-item {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+}
+.search-object-item .image img{
+    width: 52px;
+    height: 52px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.object-name .name {
+    margin-bottom: 4px;
+}
+
+.object-name .jscode {
+    color: blue;
+    font-size: 12px;
+}
+
+.object-extra-info {
+    text-align: right;
+}
+
+.object-extra-info .price{
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.object-extra-info .slash{
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.object-extra-info .text-value{
+   color: blue;
+}
+
+.object-extra-info .text-1{
+    color: #888;
+}
+
+.search-list {
+    overflow: auto;
+    height: auto;
+    max-height: calc(100vh - 300px);
+    padding-right: 20px;
+}
+
+.search-list::-webkit-scrollbar {
+    width: 7px;
+    border-radius: 10px;
+}
+  
+.search-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+  
+.search-list::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+.search-list::-webkit-scrollbar-thumb:hover {
+background: #555;
+}
+
+.chooseProductPromotionTd {
+    width: 400px;
 }

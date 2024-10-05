@@ -15,21 +15,17 @@ class Slide extends Model
         'name',
         'description',
         'keyword',
-        'image',
-        'icon',
-        'album',
+        'setting',
+        'short_code',
         'publish',
-        'order',
-        'user_id',
+        'item'
+
     ];
 
-    public function languages(){
-        return $this->belongsToMany(Language::class, 'slide_language' , 'slide_id', 'language_id')
-        ->withPivot(
-            'menu_id',
-            'language_id',
-            'name',
-            'canonical',
-        )->withTimestamps();
-    }
+    protected $table = 'slides';
+
+    protected $casts = [
+        'item' => 'json',
+        'setting' => 'json',
+    ];
 }

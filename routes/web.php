@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Ajax\ProductController as AjaxProductController;
+use App\Http\Controllers\Ajax\SourceController as AjaxSourceController;
 use App\Http\Controllers\Ajax\DashboardController as AjaxDashboardController;
 use App\Http\Controllers\Ajax\AttributeController as AjaxAttributeController;
 use App\Http\Controllers\Ajax\MenuController as AjaxMenuController;
@@ -7,6 +9,8 @@ use App\Http\Controllers\Ajax\LocationController;
 use App\Http\Controllers\Backend\AttributeCatalogueController;
 use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\AuthController;
+use App\Http\Controllers\Backend\CustomerCatalogueController;
+use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\GenerateController;
 use App\Http\Controllers\Backend\LanguageController;
@@ -16,10 +20,13 @@ use App\Http\Controllers\Backend\PostCatalogueController;
 use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\ProductCatalogueController;
 use App\Http\Controllers\Backend\ProductController;
+use App\Http\Controllers\Backend\PromotionController;
 use App\Http\Controllers\Backend\SlideController;
+use App\Http\Controllers\Backend\SourceController;
 use App\Http\Controllers\Backend\SystemController;
 use App\Http\Controllers\Backend\UserCatalogueController;
 use App\Http\Controllers\Backend\UserController;
+use App\Http\Controllers\Backend\WidgetController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -70,6 +77,29 @@ Route::prefix('admin')
                 Route::post('updatePermission',                 [UserCatalogueController::class, 'updatePermission'])->name('updatePermission');
             });
 
+            Route::prefix('customer')
+            ->as('customer.')
+            ->group(function () {
+                Route::get('index',                     [CustomerController::class, 'index'])->name('index');
+                Route::get('create',                    [CustomerController::class, 'create'])->name('create');
+                Route::post('store',                    [CustomerController::class, 'store'])->name('store');
+                Route::get('edit/{customer}',           [CustomerController::class, 'edit'])->where(['customer' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{customer}',         [CustomerController::class, 'udpate'])->where(['customer' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{customer}',         [CustomerController::class, 'delete'])->where(['customer' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{customer}',     [CustomerController::class, 'destroy'])->where(['customer' => '[0-9]+'])->name('destroy');
+            });
+
+        Route::prefix('customer_catalogue')
+            ->as('customer_catalogue.')
+            ->group(function () {
+                Route::get('index',                                 [CustomerCatalogueController::class, 'index'])->name('index');
+                Route::get('create',                                [CustomerCatalogueController::class, 'create'])->name('create');
+                Route::post('store',                                [CustomerCatalogueController::class, 'store'])->name('store');
+                Route::get('edit/{customer_catalogue}',             [CustomerCatalogueController::class, 'edit'])->where(['customer_catalogue' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{customer_catalogue}',           [CustomerCatalogueController::class, 'udpate'])->where(['customer_catalogue' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{customer_catalogue}',           [CustomerCatalogueController::class, 'delete'])->where(['customer_catalogue' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{customer_catalogue}',       [CustomerCatalogueController::class, 'destroy'])->where(['customer_catalogue' => '[0-9]+'])->name('destroy');
+            });
         Route::prefix('permissions')
             ->as('permissions.')
             ->group(function () {
@@ -203,8 +233,8 @@ Route::prefix('admin')
                 Route::delete('destroy/{menu}',          [MenuController::class, 'destroy'])->where(['menu' => '[0-9]+'])->name('destroy');
                 Route::get('children/{id}',              [MenuController::class, 'children'])->where(['id' => '[0-9]+'])->name('children');
                 Route::post('saveChildren/{id}',         [MenuController::class, 'saveChildren'])->where(['id' => '[0-9]+'])->name('saveChildren');
-                Route::get('translate/{languageId}/{id}',[MenuController::class, 'translate'])->where(['languageId' => '[0-9]+', 'id' => '[0-9]+'])->name('translate');
-                Route::post('saveTranslate/{languageId}',[MenuController::class, 'saveTranslate'])->where(['languageId' => '[0-9]+'])->name('saveTranslate');
+                Route::get('translate/{languageId}/{id}', [MenuController::class, 'translate'])->where(['languageId' => '[0-9]+', 'id' => '[0-9]+'])->name('translate');
+                Route::post('saveTranslate/{languageId}', [MenuController::class, 'saveTranslate'])->where(['languageId' => '[0-9]+'])->name('saveTranslate');
             });
 
         Route::prefix('slide')
@@ -219,14 +249,58 @@ Route::prefix('admin')
                 Route::delete('destroy/{slide}',         [SlideController::class, 'destroy'])->where(['menu' => '[0-9]+'])->name('destroy');
             });
 
-        Route::get('ajax/location/getlocation',         [LocationController::class, 'getLocation'])->name('ajax.location.index');
-        Route::post('ajax/dashboard/changeStatus',      [AjaxDashboardController::class, 'changeStatus'])->name('ajax.dashboard.changeStatus');
-        Route::post('ajax/dashboard/changeStatusAll',   [AjaxDashboardController::class, 'changeStatusAll'])->name('ajax.dashboard.changeStatusAll');
-        Route::get('ajax/dashboard/getMenu',            [AjaxDashboardController::class, 'getMenu'])->name('ajax.dashboard.getMenu');
-        Route::get('ajax/attribute/getAttribute',       [AjaxAttributeController::class, 'getAttribute'])->name('ajax.attribute.getAttribute');
-        Route::get('ajax/attribute/loadAttribute',      [AjaxAttributeController::class, 'loadAttribute'])->name('ajax.attribute.loadAttribute');
-        Route::post('ajax/menu/createCatalogue',        [AjaxMenuController::class, 'createCatalogue'])->name('ajax.menu.createCatalogue');
-        Route::post('ajax/menu/drag',                   [AjaxMenuController::class, 'drag'])->name('ajax.menu.drag');
+        Route::prefix('widget')
+            ->as('widget.')
+            ->group(function () {
+                Route::get('index',                      [WidgetController::class, 'index'])->name('index');
+                Route::get('create',                     [WidgetController::class, 'create'])->name('create');
+                Route::post('store',                     [WidgetController::class, 'store'])->name('store');
+                Route::get('edit/{widget}',              [WidgetController::class, 'edit'])->where(['widget' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{widget}',            [WidgetController::class, 'update'])->where(['widget' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{widget}',            [WidgetController::class, 'delete'])->where(['widget' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{widget}',        [WidgetController::class, 'destroy'])->where(['widget' => '[0-9]+'])->name('destroy');
+                Route::get('translate/{id}/{languageId}',[WidgetController::class, 'translate'])->where(['id' => '[0-9]+', 'languageId' => '[0-9]+'])->name('translate');
+                Route::post('saveTranslate',             [WidgetController::class, 'saveTranslate'])->name('saveTranslate');
+            });
+
+            Route::prefix('promotion')
+            ->as('promotion.')
+            ->group(function () {
+                Route::get('index',                         [PromotionController::class, 'index'])->name('index');
+                Route::get('create',                        [PromotionController::class, 'create'])->name('create');
+                Route::post('store',                        [PromotionController::class, 'store'])->name('store');
+                Route::get('edit/{promotion}',              [PromotionController::class, 'edit'])->where(['promotion' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{promotion}',            [PromotionController::class, 'update'])->where(['promotion' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{promotion}',            [PromotionController::class, 'delete'])->where(['promotion' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{promotion}',        [PromotionController::class, 'destroy'])->where(['promotion' => '[0-9]+'])->name('destroy');
+            });
+
+            Route::prefix('source')
+            ->as('source.')
+            ->group(function () {
+                Route::get('index',                         [SourceController::class, 'index'])->name('index');
+                Route::get('create',                        [SourceController::class, 'create'])->name('create');
+                Route::post('store',                        [SourceController::class, 'store'])->name('store');
+                Route::get('edit/{source}',                 [SourceController::class, 'edit'])->where(['source' => '[0-9]+'])->name('edit');
+                Route::put('udpate/{source}',               [SourceController::class, 'update'])->where(['source' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{source}',               [SourceController::class, 'delete'])->where(['source' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{source}',           [SourceController::class, 'destroy'])->where(['source' => '[0-9]+'])->name('destroy');
+            });
+
+
+        Route::get('ajax/location/getlocation',                 [LocationController::class, 'getLocation'])->name('ajax.location.index');
+        Route::post('ajax/dashboard/changeStatus',              [AjaxDashboardController::class, 'changeStatus'])->name('ajax.dashboard.changeStatus');
+        Route::post('ajax/dashboard/changeStatusAll',           [AjaxDashboardController::class, 'changeStatusAll'])->name('ajax.dashboard.changeStatusAll');
+        Route::post('ajax/dashboard/findModelObject',           [AjaxDashboardController::class, 'findModelObject'])->name('ajax.dashboard.findModelObject');
+        Route::get('ajax/dashboard/findPromotionObject',        [AjaxDashboardController::class, 'findPromotionObject'])->name('ajax.dashboard.findPromotionObject');
+        Route::get('ajax/dashboard/getMenu',                    [AjaxDashboardController::class, 'getMenu'])->name('ajax.dashboard.getMenu');
+        Route::get('ajax/dashboard/getPromotionConditionValue', [AjaxDashboardController::class, 'getPromotionConditionValue'])->name('ajax.dashboard.getPromotionConditionValue');
+        Route::get('ajax/attribute/getAttribute',               [AjaxAttributeController::class, 'getAttribute'])->name('ajax.attribute.getAttribute');
+        Route::get('ajax/attribute/loadAttribute',              [AjaxAttributeController::class, 'loadAttribute'])->name('ajax.attribute.loadAttribute');
+        Route::post('ajax/menu/createCatalogue',                [AjaxMenuController::class, 'createCatalogue'])->name('ajax.menu.createCatalogue');
+        Route::post('ajax/menu/drag',                           [AjaxMenuController::class, 'drag'])->name('ajax.menu.drag');
+        Route::get('ajax/product/loadProductPromotion',         [AjaxProductController::class, 'loadProductPromotion'])->name('ajax.product.loadProductPromotion');
+        Route::get('ajax/source/getAllSource',                  [AjaxSourceController::class, 'getAllSource'])->name('ajax.source.getAllSource');
     });
 
 // Route::get('admin/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('admin');

@@ -51,15 +51,6 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- @php
-                            // dd($user_catalogues);
-                            foreach ($user_catalogues as $value) {
-                                echo '<pre>';
-                                print($value);
-                                
-                            }
-                            die();
-                        @endphp --}}
                         <div class="row mb15">
                             <div class="col-lg-6">
                                 <div class="form-row">

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('keyword')->unique();
             $table->text('description')->nullable();
             $table->longText('item');
+            $table->longText('setting');
+            $table->string('short_code');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

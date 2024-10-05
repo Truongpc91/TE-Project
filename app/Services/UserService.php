@@ -33,12 +33,9 @@ class UserService implements UserServiceInterface
             $perPage,
             ['path' => 'admin/users/index'],
             ['id', 'DESC'],
-            [
-                
-            ],
+            [],
             ['user_catalogues'],
             ); 
-            // dd($users);
         return $users;
     }
 

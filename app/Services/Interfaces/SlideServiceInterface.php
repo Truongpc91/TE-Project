@@ -10,5 +10,5 @@ interface SlideServiceInterface
 {
     public function paginate($request);
 
-    public function create($data);
+    public function create($data, $languageId);
 }

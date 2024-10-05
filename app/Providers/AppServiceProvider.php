@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use DateTime;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +25,11 @@ class AppServiceProvider extends ServiceProvider
         'App\Services\Interfaces\MenuServiceInterface' => 'App\Services\MenuService',
         'App\Services\Interfaces\MenuCatalogueServiceInterface' => 'App\Services\MenuCatalogueService',
         'App\Services\Interfaces\SlideServiceInterface' => 'App\Services\SlideService',
+        'App\Services\Interfaces\WidgetServiceInterface' => 'App\Services\WidgetService',
+        'App\Services\Interfaces\PromotionServiceInterface' => 'App\Services\PromotionService',
+        'App\Services\Interfaces\SourceServiceInterface' => 'App\Services\SourceService',
+        'App\Services\Interfaces\CustomerCatalogueServiceInterface' => 'App\Services\CustomerCatalogueService',
+        'App\Services\Interfaces\CustomerServiceInterface' => 'App\Services\CustomerService',
     ];
 
     /**
@@ -41,6 +49,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Validator::extend('custom_date_format', function($attribute, $value, $parameters, $validator){
+            return DateTime::createFromFormat('d/m/Y H:i', $value) !== false;
+        });
+
+        Validator::extend('custom_after', function($attribute, $value, $parameters, $validator){
+            $startDate = Carbon::createFromFormat('d/m/Y H:i', $validator->getData()[$parameters[0]]);
+            $endDate = Carbon::createFromFormat('d/m/Y H:i', $value);
+            
+            return $endDate->greaterThan($startDate) !== false;
+        });
     }
 }

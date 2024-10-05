@@ -26,6 +26,40 @@ return [
             ]
         ],
         [
+            'title' => 'QL Nhóm Khách Hàng',
+            'icon' => 'fa fa-user',
+            'name' => ['customer','customer_catalogue'],
+            'subModule' => [
+                [
+                    'title' => 'QL Nhóm Khách Hàng',
+                    'route' => 'admin/customer_catalogue/index'
+                ],
+                [
+                    'title' => 'QL Khách Hàng',
+                    'route' => 'admin/customer/index'
+                ],
+            ]
+        ],
+        [
+            'title' => 'QL Marketing',
+            'icon' => 'fa fa-money',
+            'name' => ['promotion'],
+            'subModule' => [
+                [
+                    'title' => 'QL Marketing',
+                    'route' => 'admin/promotion/index'
+                ], 
+                [
+                    'title' => 'QL Mã giảm giá',
+                    'route' => 'admin/coupon/index'
+                ], 
+                [
+                    'title' => 'QL Nguồn khách hàng',
+                    'route' => 'admin/source/index'
+                ], 
+            ]
+        ],
+        [
             'title' => 'QL Bài viết',
             'icon' => 'fa fa-file',
             'name' => ['post'],
@@ -97,6 +131,10 @@ return [
                 [
                     'title' => 'Cấu hình hệ thống',
                     'route' => 'admin/system/index'
+                ],
+                [
+                    'title' => 'Quản lý Widget',
+                    'route' => 'admin/widget/index'
                 ],
             ]
         ]

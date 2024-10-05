@@ -12,7 +12,7 @@ class ReponsitoryServiceProvider extends ServiceProvider
      * 
      */
 
-     public $bindings = [
+    public $bindings = [
         'App\Repositories\Interfaces\UserRepositoryInterface' => 'App\Repositories\UserRepository',
         'App\Repositories\Interfaces\UserCatalogueRepositoryInterface' => 'App\Repositories\UserCatalogueRepository',
         'App\Repositories\Interfaces\PermissionReponsitoryInterface' => 'App\Repositories\PermissionReponsitory',
@@ -34,12 +34,16 @@ class ReponsitoryServiceProvider extends ServiceProvider
         'App\Repositories\Interfaces\MenuCatalogueReponsitoryInterface' => 'App\Repositories\MenuCatalogueReponsitory',
         'App\Repositories\Interfaces\RouterRepositoryInterface' => 'App\Repositories\RouterRepository',
         'App\Repositories\Interfaces\SlideRepositoryInterface' => 'App\Repositories\SlideRepository',
+        'App\Repositories\Interfaces\WidgetRepositoryInterface' => 'App\Repositories\WidgetRepository',
+        'App\Repositories\Interfaces\PromotionReponsitoryInterface' => 'App\Repositories\PromotionReponsitory',
+        'App\Repositories\Interfaces\SourceReponsitoryInterface' => 'App\Repositories\SourceReponsitory',
+        'App\Repositories\Interfaces\CustomerCatalogueReponsitoryInterface' => 'App\Repositories\CustomerCatalogueReponsitory',
+        'App\Repositories\Interfaces\CustomerReponsitoryInterface' => 'App\Repositories\CustomerReponsitory',
     ];
-    
+
     public function register(): void
     {
-        foreach($this->bindings as $key => $val)
-        {
+        foreach ($this->bindings as $key => $val) {
             $this->app->bind($key, $val);
         }
     }

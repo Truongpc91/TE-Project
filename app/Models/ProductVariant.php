@@ -22,8 +22,10 @@ class ProductVariant extends Model
         'file_url',
         'album',
         'publish',
-        'user_id'
+        'user_id',
+        'uuid',
     ];
+
 
     public function products(){
         return $this->belongsTo(Product::class, 'product_id', 'id');

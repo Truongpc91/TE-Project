@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Class ProductService
@@ -61,7 +62,7 @@ class ProductService extends BaseService implements ProductServiceInterface
             'groupBy' => $this->paginateSelect()
         ];
         $orderBy = ['products.id', 'DESC'];
-        $relations = ['product_catalogues'];
+        $relations = ['product_catalogues','languages'];
         $rawQuery = $this->whereRaw($request, $languageId);
         $joins = [
             ['product_language as tb2', 'tb2.product_id', '=', 'products.id'],
@@ -78,7 +79,6 @@ class ProductService extends BaseService implements ProductServiceInterface
             $relations,
             $rawQuery
         );
-       
         return $products;
     }
 
@@ -91,7 +91,12 @@ class ProductService extends BaseService implements ProductServiceInterface
                 $this->updateLanguageForProduct($product, $request, $languageId);
                 $this->updateCatalogueForProduct($product, $request);
                 $this->createRouter($product, $request, $this->controllerName, $languageId);
-                $this->createVariant($product, $request, $languageId);
+                if($request->input('attribute')){
+                    $this->createVariant($product, $request, $languageId);
+                }
+
+               
+                // $this->createVariant($product, $request, $languageId);
             }
             DB::commit();
             return true;
@@ -108,7 +113,6 @@ class ProductService extends BaseService implements ProductServiceInterface
     {
         DB::beginTransaction();
         try {
-           
             $product = $this->productReponsitory->findById($id);
             if ($this->uploadProduct($product, $request)) {
                 $this->updateLanguageForProduct($product, $request, $languageId);
@@ -121,8 +125,9 @@ class ProductService extends BaseService implements ProductServiceInterface
                     $variant->attributes()->detach();
                     $variant->delete();
                 });
-
-                $this->createVariant($product, $request, $languageId);
+                if($request->input('attribute')){
+                    $this->createVariant($product, $request, $languageId);
+                }
             }
             DB::commit();
             return true;
@@ -160,6 +165,8 @@ class ProductService extends BaseService implements ProductServiceInterface
         if ($request->hasFile('image')) {
             $payload['image'] = Storage::put(self::PATH_UPLOAD, $request->file('image'));
         }
+        $payload['price'] = convert_price(($payload['price']) ?? 0);
+
         $payload['attributeCatalogue'] = $this->formatJson($request, 'attributeCatalogue');
         $payload['attribute'] = $this->formatJson($request, 'attribute');   
         $payload['variant'] = $this->formatJson($request, 'variant');   
@@ -186,7 +193,17 @@ class ProductService extends BaseService implements ProductServiceInterface
     private function uploadProduct($product, $request)
     {
         $payload = $request->only($this->payload());
-        // $payload['album'] = $this->formatAlbum($request);
+
+        if ($request->hasFile('image')) {
+            $payload['image'] = Storage::put(self::PATH_UPLOAD, $request->file('image'));
+        }
+
+        $currentImage = $product->image;
+
+        if ($request->hasFile('image') && $currentImage && Storage::exists($currentImage)) {
+            Storage::delete($currentImage);
+        }
+
         return $this->productReponsitory->update($product, $payload);
     }
 
@@ -216,10 +233,10 @@ class ProductService extends BaseService implements ProductServiceInterface
         return $payload;
     }
 
-    private function formatJson($request, $inputName)
-    {
-        return ($request->input($inputName) && !empty($request->input($inputName))) ? json_encode($request->input($inputName)) : '';
-    }
+    // private function formatJson($request, $inputName)
+    // {
+    //     return ($request->input($inputName) && !empty($request->input($inputName))) ? json_encode($request->input($inputName)) : '';
+    // }
 
 
     private function catalogue($request)
@@ -295,7 +312,7 @@ class ProductService extends BaseService implements ProductServiceInterface
     private function createVariant($product, $request, $languageId)
     {
         $payload = $request->only(['variant', 'productVariant', 'attribute']);
-        $variant = $this->createVariantArray($payload);
+        $variant = $this->createVariantArray($payload, $product);
         $product->product_variants()->delete();
         $varriants = $product->product_variants()->createMany($variant);
         $variantId = $varriants->pluck('id');
@@ -340,12 +357,15 @@ class ProductService extends BaseService implements ProductServiceInterface
         return $combines;
     }
 
-    private function createVariantArray(array $payload = []): array
+    private function createVariantArray(array $payload = [], $product): array
     {
         $variant = [];
         if (isset($payload['variant']['sku']) && count($payload['variant']['sku'])) {
             foreach ($payload['variant']['sku'] as $key => $val) {
+                $uuid = Uuid::uuid5(Uuid::NAMESPACE_DNS,$product->id.', '.$payload['productVariant']['id'][$key]);
+
                 $variant[] = [
+                    'uuid' => $uuid,
                     'code' => ($payload['productVariant']['id'][$key]) ?? '',
                     'quantity' => ($payload['variant']['quantity'][$key]) ?? '',
                     'sku' => $val,

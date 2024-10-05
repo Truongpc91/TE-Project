@@ -116,3 +116,65 @@ if (!function_exists('buildMenu')) {
         return $output;
     }
 }
+
+if (!function_exists('loadClass')) {
+    function loadClass(string $model = '', $folder = 'Repositories', $interface = 'Reponsitory')
+    {
+        if ($model == 'User') {
+            $interface = 'Repository';
+        }
+        $serviceInterfaceNamespace = '\App\\' . $folder . '\\' . ucfirst($model) . $interface;
+
+        if (class_exists($serviceInterfaceNamespace)) {
+            $serviceInstance = app($serviceInterfaceNamespace);
+        }
+
+        return $serviceInstance;
+    }
+}
+
+if (!function_exists('convertArrayByKey')) {
+    function convertArrayByKey($object = null, $fields = [])
+    {
+        $temp = [];
+        foreach ($object as $key => $val) {
+            foreach ($fields as $field) {
+                if (is_array($object)) {
+                    $temp[$field][] = $val[$field];
+                } else {
+                    $extract = explode('.', $field);
+                    if (count($extract) == 2) {
+                        $temp[$extract[0]][] = $val->{$extract[1]}->first()->pivot->{$extract[0]};
+                    } else {
+                        $temp[$field][] = $val->{$field};
+                    }
+                }
+            }
+        }
+        return $temp;
+    }
+}
+
+
+if (!function_exists('convertDateTime')) {
+    function convertDateTime(string $date = '', string $format = 'd/m/Y H:i')
+    {
+
+        $carbonDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $date);
+
+        return $carbonDate->format($format);
+    }
+}
+
+if (!function_exists('renderDiscountInformation')) {
+    function renderDiscountInformation($promotion = [])
+    {
+        if ($promotion->method === 'product_and_quantity') {
+            $discountValue = $promotion->discountInformation['info']['discountValue'];
+            $discountType = ($promotion->discountInformation['info']['discountType'] == 'percent') ? '%' : 'đ';
+            return '<div class="label label-primary">' . number_format($discountValue) . ' '. $discountType . '</div>';
+        }
+
+        return '<div><a href="'.route('admin.promotion.edit', $promotion->id).'">Xem chi tiết</a></div>';
+    }
+}

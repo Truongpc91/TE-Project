@@ -127,6 +127,8 @@ return [
             'title' => 'Cập nhật quyền'
         ],
     ],
+
+
     'permission' => [
         'index' => [
             'title' => 'Quản lý Quyền',
@@ -180,6 +182,47 @@ return [
        
     ],
 
+    'widget' => [
+        'index' => [
+            'title' => 'Quản lý Widget',
+            'table' => 'Quản lý Widget',
+            'translate' => 'Tạo bản dịch {language} cho Widget : '
+        ],
+        'create' => [
+            'title' => 'Tạo mới Widget'
+        ], 
+        'delete' => [
+            'title' => 'Xóa Widget'
+        ], 
+    ],
+
+    'source' => [
+        'index' => [
+            'title' => 'Quản lý Nguồn khách hàng',
+            'table' => 'Quản lý Nguồn khách hàng',
+        ],
+        'create' => [
+            'title' => 'Tạo mới Nguồn khách hàng'
+        ], 
+        'delete' => [
+            'title' => 'Xóa Nguồn khách hàng'
+        ], 
+    ],
+
+    'promotion' => [
+        'index' => [
+            'title' => 'Quản lý Promotion',
+            'table' => 'Quản lý Promotion',
+            // 'translate' => 'Tạo bản dịch {language} cho Widget : '
+        ],
+        'create' => [
+            'title' => 'Tạo mới Promotion'
+        ], 
+        'delete' => [
+            'title' => 'Xóa Promotion'
+        ], 
+    ],
+
     'menu' => [
         'index' => [
             'title' => 'Quản lý Menu',
@@ -200,6 +243,38 @@ return [
             'title'     => 'Tạo bản dịch {language} cho Menu',
         ], 
     ],
+    'customerCatalogue' => [
+        'index' => [
+            'title' => 'Quản lý nhóm khách hàng',
+            'table' => 'Danh sách nhóm khách hàng'
+        ],
+        'create' => [
+            'title' => 'Thêm mới nhóm khách hàng'
+        ],
+        'edit' => [
+            'title' => 'Cập nhật nhóm khách hàng'
+        ],
+        'delete' => [
+            'title' => 'Xóa nhóm khách hàng'
+        ],
+    ],
+
+    'customer' => [
+        'index' => [
+            'title' => 'Quản lý khách hàng',
+            'table' => 'Danh sách khách hàng'
+        ],
+        'create' => [
+            'title' => 'Thêm mới khách hàng'
+        ],
+        'edit' => [
+            'title' => 'Cập nhật khách hàng'
+        ],
+        'delete' => [
+            'title' => 'Xóa khách hàng'
+        ],
+    ],
+
     'parent' => 'Chọn danh mục cha',
     'parentNotice' => 'Chọn Root nếu không có danh mục cha',
     'subparent' => 'Chọn danh mục phụ (nếu có)',
