@@ -100,4 +100,8 @@ class Language extends Model
             'canonical',
         )->withTimestamps();
     }
+
+    public function systems(){
+        return $this->hasMany(System::class, 'language_id', 'id');
+    }
 }

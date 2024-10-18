@@ -93,7 +93,7 @@ class AttributeCatalogueService extends BaseService implements AttributeCatalogu
             if($flag == TRUE){
                 $this->updateLanguageForCatalogue($attributeCatalogue, $request, $languageId);
                 $this->updateRouter(
-                    $attributeCatalogue, $request, $this->controllerName
+                    $attributeCatalogue, $request, $this->controllerName, $this->language
                 );
                 $this->nestedset = new Nestedsetbie([
                     'table' => 'attribute_catalogues',

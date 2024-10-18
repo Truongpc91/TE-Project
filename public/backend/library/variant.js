@@ -77,7 +77,6 @@
         })
     }
 
-
     HT.createProductVariant = () => {
         $(document).on('change', '.selectVariant', function(){
             let _this = $(this)
@@ -675,31 +674,38 @@
     HT.productVariant = () => {
         variant = JSON.parse(atob(variant))
 
-        console.log(variant);
+        console.log(variant); 
+        // const findIndexVariantBySku = (sku) => variant.sku.findIndex((item) => item === sku)
         
         $('.variant-row').each(function(index,value){
             let _this = $(this);
+            let variantKey = _this.attr('class').match(/tr-variant-(\d+-\d+)/)[1];
+            let dataIndex = variantt.sku.findIndex(sku => sku.includes(variantKey))
 
-            let inputHiddenFields = [
-                { name: 'variant[quantity][]', class: 'variant_quantity', value: variant.quantity[index]},
-                { name: 'variant[sku][]', class: 'variant_sku', value: variant.sku[index]},
-                { name: 'variant[price][]', class: 'variant_price', value: variant.price[index] },
-                { name: 'variant[barcode][]', class: 'variant_barcode', value: variant.barcode[index] },
-                { name: 'variant[file_name][]', class: 'variant_filename', value: variant.file_name[index]},
-                { name: 'variant[file_url][]', class: 'variant_fileurl', value: variant.file_url[index] },
-                { name: 'variant[album][]', class: 'variant_album', value: variant.album[index] },
-            ];
-           
+            console.log(variantKey, dataIndex);
+            
 
-            for (let i = 0; i < inputHiddenFields.length; i++) {
-                _this.find('.' + inputHiddenFields[i].class).val(inputHiddenFields[i].value)
-                // console.log('.' + inputHiddenFields[i].class).val(inputHiddenFields[i].value);
+            if(dataIndex !== -1){
+                let inputHiddenFields = [
+                    { name: 'variant[quantity][]', class: 'variant_quantity', value: variant.quantity[dataIndex]},
+                    { name: 'variant[sku][]', class: 'variant_sku', value: variant.sku[dataIndex]},
+                    { name: 'variant[price][]', class: 'variant_price', value: variant.price[dataIndex] },
+                    { name: 'variant[barcode][]', class: 'variant_barcode', value: variant.barcode[dataIndex] },
+                    { name: 'variant[file_name][]', class: 'variant_filename', value: variant.file_name[dataIndex]},
+                    { name: 'variant[file_url][]', class: 'variant_fileurl', value: variant.file_url[dataIndex] },
+                    { name: 'variant[album][]', class: 'variant_album', value: variant.album[dataIndex] },
+                ];
+               
+    
+                for (let i = 0; i < inputHiddenFields.length; i++) {
+                    _this.find('.' + inputHiddenFields[i].class).val(inputHiddenFields[i].value)
+                    // console.log('.' + inputHiddenFields[i].class).val(inputHiddenFields[i].value);
+                }
+    
+                _this.find('.td-quantity').html(HT.addCommas(variant.quantity[dataIndex]))
+                _this.find('.td-price').html(HT.addCommas(variant.price[dataIndex]))
+                _this.find('.td-sku').html(HT.addCommas(variant.sku[dataIndex]))
             }
-
-            _this.find('.td-quantity').html(HT.addCommas(variant.quantity[index]))
-            _this.find('.td-price').html(HT.addCommas(variant.price[index]))
-            _this.find('.td-sku').html(HT.addCommas(variant.sku[index]))
-
         })
     }
 

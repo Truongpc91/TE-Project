@@ -5,7 +5,11 @@ use App\Http\Controllers\Ajax\SourceController as AjaxSourceController;
 use App\Http\Controllers\Ajax\DashboardController as AjaxDashboardController;
 use App\Http\Controllers\Ajax\AttributeController as AjaxAttributeController;
 use App\Http\Controllers\Ajax\MenuController as AjaxMenuController;
+use App\Http\Controllers\Ajax\CartController as AjaxCartController;
+use App\Http\Controllers\Ajax\OrderController as AjaxOrderController;
+use App\Http\Controllers\Ajax\ReviewController as AjaxReviewController;
 use App\Http\Controllers\Ajax\LocationController;
+
 use App\Http\Controllers\Backend\AttributeCatalogueController;
 use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\AuthController;
@@ -15,6 +19,7 @@ use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\GenerateController;
 use App\Http\Controllers\Backend\LanguageController;
 use App\Http\Controllers\Backend\MenuController;
+use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\PermissionsController;
 use App\Http\Controllers\Backend\PostCatalogueController;
 use App\Http\Controllers\Backend\PostController;
@@ -27,6 +32,11 @@ use App\Http\Controllers\Backend\SystemController;
 use App\Http\Controllers\Backend\UserCatalogueController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\WidgetController;
+use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\MomoController;
+use App\Http\Controllers\Frontend\RouterController;
+use App\Http\Controllers\Frontend\VnpayController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,9 +50,31 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/',                                 [HomeController::class, 'index'])->name('index');
+Route::get('/{canonical}',                      [RouterController::class, 'index'])->name('router.index')->where('canonical', '[a-zA-Z0-9-]+');
+Route::get('/{canonical}/trang-{page}',         [RouterController::class, 'page'])->name('router.page')->where('canonical', '[a-zA-Z0-9-]+')->where('page', '[0-9]');
+Route::get('/thanh-toan' . '.html',             [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('cart/create',                      [CartController::class, 'store'])->name('cart.store');
+Route::get('cart/success/{code}',               [CartController::class, 'success'])->name('cart.success');
+
+
+/* VNPAY*/
+Route::get('return/vnpay',                          [VnpayController::class, 'vnpay_return'])->name('vnpay.vnpay_return');
+Route::get('return/vnpay_ipn',                      [VnpayController::class, 'vnpay_ipn'])->name('vnpay.vnpay_ipn');
+
+/* MOMOPAY*/
+Route::get('return/momo',                           [MomoController::class, 'momo_return'])->name('vnpay.momo_return');
+Route::get('return/momo_ipn',                       [MomoController::class, 'momo_ipn'])->name('vnpay.momo_ipn');
+
+//* AJAX ROUTES FRONTEND 
+Route::get('ajax/product/loadVariant',                  [AjaxProductController::class, 'loadVariant'])->name('ajax.product.loadVariant');
+Route::get('ajax/product/filter',                       [AjaxProductController::class, 'filter'])->name('ajax.product.filter');
+Route::post('ajax/cart/create',                         [AjaxCartController::class, 'create'])->name('ajax.cart.create');
+Route::post('ajax/cart/update',                         [AjaxCartController::class, 'update'])->name('ajax.cart.update');
+Route::post('ajax/cart/delete',                         [AjaxCartController::class, 'delete'])->name('ajax.cart.delete');
+Route::post('ajax/review/create',                       [AjaxReviewController::class, 'create'])->name('ajax.review.create');
+
+
 
 Route::prefix('admin')
     ->as('admin.')
@@ -77,7 +109,7 @@ Route::prefix('admin')
                 Route::post('updatePermission',                 [UserCatalogueController::class, 'updatePermission'])->name('updatePermission');
             });
 
-            Route::prefix('customer')
+        Route::prefix('customer')
             ->as('customer.')
             ->group(function () {
                 Route::get('index',                     [CustomerController::class, 'index'])->name('index');
@@ -223,18 +255,18 @@ Route::prefix('admin')
         Route::prefix('menu')
             ->as('menu.')
             ->group(function () {
-                Route::get('index',                      [MenuController::class, 'index'])->name('index');
-                Route::get('create',                     [MenuController::class, 'create'])->name('create');
-                Route::post('store',                     [MenuController::class, 'store'])->name('store');
-                Route::get('edit/{menu}',                [MenuController::class, 'edit'])->where(['menu' => '[0-9]+'])->name('edit');
-                Route::get('editMenu/{menu}',            [MenuController::class, 'editMenu'])->where(['menu' => '[0-9]+'])->name('editMenu');
-                Route::put('udpate/{menu}',              [MenuController::class, 'update'])->where(['menu' => '[0-9]+'])->name('udpate');
-                Route::get('delete/{menu}',              [MenuController::class, 'delete'])->where(['menu' => '[0-9]+'])->name('delete');
-                Route::delete('destroy/{menu}',          [MenuController::class, 'destroy'])->where(['menu' => '[0-9]+'])->name('destroy');
-                Route::get('children/{id}',              [MenuController::class, 'children'])->where(['id' => '[0-9]+'])->name('children');
-                Route::post('saveChildren/{id}',         [MenuController::class, 'saveChildren'])->where(['id' => '[0-9]+'])->name('saveChildren');
-                Route::get('translate/{languageId}/{id}', [MenuController::class, 'translate'])->where(['languageId' => '[0-9]+', 'id' => '[0-9]+'])->name('translate');
-                Route::post('saveTranslate/{languageId}', [MenuController::class, 'saveTranslate'])->where(['languageId' => '[0-9]+'])->name('saveTranslate');
+                Route::get('index',                         [MenuController::class, 'index'])->name('index');
+                Route::get('create',                        [MenuController::class, 'create'])->name('create');
+                Route::post('store',                        [MenuController::class, 'store'])->name('store');
+                Route::get('edit/{menu}',                   [MenuController::class, 'edit'])->where(['menu' => '[0-9]+'])->name('edit');
+                Route::get('editMenu/{menu}',               [MenuController::class, 'editMenu'])->where(['menu' => '[0-9]+'])->name('editMenu');
+                Route::put('udpate/{menu}',                 [MenuController::class, 'update'])->where(['menu' => '[0-9]+'])->name('udpate');
+                Route::get('delete/{menu}',                 [MenuController::class, 'delete'])->where(['menu' => '[0-9]+'])->name('delete');
+                Route::delete('destroy/{menu}',             [MenuController::class, 'destroy'])->where(['menu' => '[0-9]+'])->name('destroy');
+                Route::get('children/{id}',                 [MenuController::class, 'children'])->where(['id' => '[0-9]+'])->name('children');
+                Route::post('saveChildren/{id}',            [MenuController::class, 'saveChildren'])->where(['id' => '[0-9]+'])->name('saveChildren');
+                Route::get('translate/{languageId}/{id}',   [MenuController::class, 'translate'])->where(['languageId' => '[0-9]+', 'id' => '[0-9]+'])->name('translate');
+                Route::post('saveTranslate/{languageId}',   [MenuController::class, 'saveTranslate'])->where(['languageId' => '[0-9]+'])->name('saveTranslate');
             });
 
         Route::prefix('slide')
@@ -259,11 +291,11 @@ Route::prefix('admin')
                 Route::put('udpate/{widget}',            [WidgetController::class, 'update'])->where(['widget' => '[0-9]+'])->name('udpate');
                 Route::get('delete/{widget}',            [WidgetController::class, 'delete'])->where(['widget' => '[0-9]+'])->name('delete');
                 Route::delete('destroy/{widget}',        [WidgetController::class, 'destroy'])->where(['widget' => '[0-9]+'])->name('destroy');
-                Route::get('translate/{id}/{languageId}',[WidgetController::class, 'translate'])->where(['id' => '[0-9]+', 'languageId' => '[0-9]+'])->name('translate');
+                Route::get('translate/{id}/{languageId}', [WidgetController::class, 'translate'])->where(['id' => '[0-9]+', 'languageId' => '[0-9]+'])->name('translate');
                 Route::post('saveTranslate',             [WidgetController::class, 'saveTranslate'])->name('saveTranslate');
             });
 
-            Route::prefix('promotion')
+        Route::prefix('promotion')
             ->as('promotion.')
             ->group(function () {
                 Route::get('index',                         [PromotionController::class, 'index'])->name('index');
@@ -275,7 +307,7 @@ Route::prefix('admin')
                 Route::delete('destroy/{promotion}',        [PromotionController::class, 'destroy'])->where(['promotion' => '[0-9]+'])->name('destroy');
             });
 
-            Route::prefix('source')
+        Route::prefix('source')
             ->as('source.')
             ->group(function () {
                 Route::get('index',                         [SourceController::class, 'index'])->name('index');
@@ -285,6 +317,14 @@ Route::prefix('admin')
                 Route::put('udpate/{source}',               [SourceController::class, 'update'])->where(['source' => '[0-9]+'])->name('udpate');
                 Route::get('delete/{source}',               [SourceController::class, 'delete'])->where(['source' => '[0-9]+'])->name('delete');
                 Route::delete('destroy/{source}',           [SourceController::class, 'destroy'])->where(['source' => '[0-9]+'])->name('destroy');
+            });
+
+        Route::prefix('order')
+            ->as('order.')
+            ->group(function () {
+                Route::get('index',                         [OrderController::class, 'index'])->name('index');
+                Route::get('detail/{order}',                [OrderController::class, 'detail'])->where(['order' => '[0-9]+'])->name('detail');
+                Route::put('udpate/{order}',                [OrderController::class, 'update'])->where(['order' => '[0-9]+'])->name('udpate');
             });
 
 
@@ -301,6 +341,8 @@ Route::prefix('admin')
         Route::post('ajax/menu/drag',                           [AjaxMenuController::class, 'drag'])->name('ajax.menu.drag');
         Route::get('ajax/product/loadProductPromotion',         [AjaxProductController::class, 'loadProductPromotion'])->name('ajax.product.loadProductPromotion');
         Route::get('ajax/source/getAllSource',                  [AjaxSourceController::class, 'getAllSource'])->name('ajax.source.getAllSource');
+        Route::post('ajax/order/update',                        [AjaxOrderController::class, 'update'])->name('ajax.order.update');
+        Route::get('ajax/order/chart',                          [AjaxOrderController::class, 'chart'])->name('ajax.order.chart');
     });
 
 // Route::get('admin/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('admin');
@@ -318,6 +360,6 @@ Route::prefix('admin')
 
 
 
-Route::get('admin', [AuthController::class, 'index'])->name('auth.admin')->middleware('login');
-Route::post('login', [AuthController::class, 'login'])->name('auth.login');
-Route::get('logout', [AuthController::class, 'logout'])->name('auth.logout');
+Route::get('admin/login',       [AuthController::class, 'index'])->name('auth.admin')->middleware('login');
+Route::post('login',            [AuthController::class, 'login'])->name('auth.login');
+Route::get('admin/logout',      [AuthController::class, 'logout'])->name('auth.logout');

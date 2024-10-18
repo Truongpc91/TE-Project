@@ -20,4 +20,16 @@ class ProductVariantReponsitory extends BaseRepository implements ProductVariant
         $this->model = $model;
     }
 
+    public function findVariant($code, $productId, $languageId){
+        // dd($code);
+        return $this->model->where([
+            ['code', '=', $code],
+            ['product_id', '=', $productId]
+        ])
+        ->with('languages', function($query) use ($languageId) {
+            $query->where('language_id', '=', $languageId);
+        })
+        ->first();
+    }
+
 }

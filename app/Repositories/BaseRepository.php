@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Repositories\Interfaces\BaseRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class UserService
@@ -105,9 +106,15 @@ class BaseRepository implements BaseRepositoryInterface
         return $query->forceDelete();
     }
 
-    public function all(array $relation = [])
+    public function all(array $relation = [],string $selectRaw = '')
     {
-        return $this->model->with($relation)->get();
+        $query = $this->model->newQuery();
+        $query->select('*');
+        $query->with($relation);
+        if(!empty($selectRaw)) {
+            $query->selectRaw($selectRaw);
+        }
+        return $query->get();
     }
 
     public function findById(
@@ -123,8 +130,10 @@ class BaseRepository implements BaseRepositoryInterface
         $flag = false,
         $relation = [],
         $orderBy = ['id', 'desc'],
-        array $param = []
+        array $param = [],
+        array $withCount = []
     ) {
+        // dd($param);
         $query = $this->model->newQuery();
         foreach ($condition as $key => $val) {
             $query->where($val[0], $val[1], $val[2]);
@@ -133,9 +142,15 @@ class BaseRepository implements BaseRepositoryInterface
         if(isset($param['whereIn'])){
             $query->whereIn($param['whereInField'], $param['whereIn']);
         }
+        
         $query->with($relation);
+        $query->withCount($withCount);
         $query->orderBy($orderBy[0], $orderBy[1]);
+        // dd($query->toSql());
         return ($flag == false) ? $query->first() : $query->get();
+        // $i =  ($flag == false) ? $query->first() : $query->get();
+        // dd($i);
+
     }
 
     public function createPivot($model, array $payload = [], string $relation = '')
@@ -163,6 +178,74 @@ class BaseRepository implements BaseRepositoryInterface
                 $query->where($alias . '.' . $val[0], $val[1], $val[2]);
             }
         })->get();
+    }
+
+
+    public function recursiveCatalogue(string $parameter = '', $table = ''){
+        // $parameter = "16,15,14,13,12,11,10,9,6,5,3" 
+        $ids = explode(',', $parameter);
+        $table = $table.'_catalogues';
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        // dd($placeholders);
+        $query = "
+            WITH RECURSIVE category_tree AS (
+                SELECT id, parent_id, deleted_at
+                FROM $table
+                WHERE id IN ($placeholders) AND deleted_at IS NULL
+                UNION ALL
+                SELECT c.id, c.parent_id, c.deleted_at
+                FROM $table as c
+                JOIN category_tree as ct ON ct.id = c.parent_id
+            )
+
+            SELECT DISTINCT id FROM category_tree WHERE deleted_at IS NULL
+        ";
+
+        // $results = DB::select($query, [':'.$parameter => $parameter]);
+        $results = DB::select($query, $ids);
+        return $results;
+    }
+
+    public function findObjectByCategoryId($catIds = [], $model, $language){
+        $query = $this->model->newQuery();
+        $this->model->where([
+            ['publish', '=', 2]
+        ])
+        ->with(
+            'languages', function($query) use ($language) {
+                $query->where('language_id', '=', $language);
+            }
+        )
+        ->with($model.'_catalogues', function($query) use ($language){
+            $query->with('languages', function($query) use ($language) {
+                $query->where('language_id', '=', $language);
+            });
+        });
+
+        if($model === 'product'){
+            $query->with('product_variants');
+        }
+
+        $query->join($model.'_catalogue_'.$model.' as tb2', 'tb2.'.$model.'_id', '=', $model.'s.id')
+        ->whereIn('tb2.'.$model.'_catalogue_id', $catIds)
+        ->orderBy('order', 'DESC')
+        ->limit(19)
+        ->get();
+
+        return $query->get();
+    }
+
+    public function breadcrumb($model, $language){
+        // dd($model);
+        return $this->findByCondition([
+            ['lft', '<=', $model->lft],
+            ['rgt', '>=', $model->rgt],
+            config('apps.general.defaultPublish')
+        ], TRUE, [
+            'languages' => function ($query) use($language){
+                $query->where('language_id', '=', $language);
+            }
+        ], ['lft', 'ASC']);
     }
 
     // updatePivot($post, $payloadLanguage, 'languages')

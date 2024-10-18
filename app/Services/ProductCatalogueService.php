@@ -5,11 +5,11 @@ namespace App\Services;
 use App\Services\Interfaces\ProductCatalogueServiceInterface;
 use App\Services\BaseService;
 use App\Repositories\Interfaces\ProductCatalogueReponsitoryInterface as ProductCatalogueReponsitory;
-// use App\Repositories\Interfaces\RouteReponsitoryInterface as RouterReponsitory;
+use App\Repositories\Interfaces\RouterRepositoryInterface as RouterReponsitory;
+use App\Repositories\Interfaces\AttributeCatalogueReponsitoryInterface as AttributeCatalogueReponsitory;
+use App\Repositories\Interfaces\AttributeReponsitoryInterface as AttributeReponsitory;
+
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Classes\Nestedsetbie;
 use Illuminate\Support\Facades\Storage;
@@ -24,21 +24,29 @@ class ProductCatalogueService extends BaseService implements ProductCatalogueSer
     const PATH_UPLOAD = 'product_catalogues';
 
     protected $productCatalogueReponsitory;
+    protected $AttributeCatalogueReponsitory;
+    protected $AttributeReponsitory;
     // protected $routerReponsitory;
     protected $nestedset;
     protected $language;
     protected $controllerName = 'ProductCatalogueController';
-    
+
 
     public function __construct(
         ProductCatalogueReponsitory $productCatalogueReponsitory,
-        // RouterReponsitory $routerReponsitory,
-    ){
+        RouterReponsitory $routerReponsitory,
+        AttributeCatalogueReponsitory $AttributeCatalogueReponsitory,
+        AttributeReponsitory $AttributeReponsitory,
+
+    ) {
         $this->productCatalogueReponsitory = $productCatalogueReponsitory;
-        // $this->routerReponsitory = $routerReponsitory;
+        $this->routerReponsitory = $routerReponsitory;
+        $this->AttributeCatalogueReponsitory = $AttributeCatalogueReponsitory;
+        $this->AttributeReponsitory = $AttributeReponsitory;
     }
 
-    public function paginate($request, $languageId){
+    public function paginate($request, $languageId)
+    {
         $perPage = $request->integer('perpage');
         $condition = [
             'keyword' => addslashes($request->input('keyword')),
@@ -48,101 +56,113 @@ class ProductCatalogueService extends BaseService implements ProductCatalogueSer
             ]
         ];
         $productCatalogues = $this->productCatalogueReponsitory->pagination(
-            $this->paginateSelect(), 
-            $condition, 
+            $this->paginateSelect(),
+            $condition,
             $perPage,
-            ['path' => 'product.catalogue.index'],  
+            ['path' => 'product.catalogue.index'],
             ['product_catalogues.lft', 'ASC'],
             [
-                ['product_catalogue_language as tb2','tb2.product_catalogue_id', '=' , 'product_catalogues.id']
-            ], 
+                ['product_catalogue_language as tb2', 'tb2.product_catalogue_id', '=', 'product_catalogues.id']
+            ],
             ['languages']
         );
         // dd($productCatalogues);
         return $productCatalogues;
     }
 
-    public function create($request, $languageId){
+    public function create($request, $languageId)
+    {
         DB::beginTransaction();
-        try{
-            if ($request->hasFile('image')) {
-                $payload['image'] = Storage::put(self::PATH_UPLOAD, $request->file('image'));
-            }
+        try {
+
             $productCatalogue = $this->createCatalogue($request);
             // dd($productCatalogue);
-            if($productCatalogue->id > 0){
+            if ($productCatalogue->id > 0) {
                 $this->updateLanguageForCatalogue($productCatalogue, $request, $languageId);
                 $this->createRouter($productCatalogue, $request, $this->controllerName,  $languageId);
                 $this->nestedset = new Nestedsetbie([
                     'table' => 'product_catalogues',
                     'foreignkey' => 'product_catalogue_id',
-                    'language_id' =>  $languageId ,
+                    'language_id' =>  $languageId,
                 ]);
                 $this->nestedset();
             }
             DB::commit();
             return true;
-        }catch(\Exception $e ){
+        } catch (\Exception $e) {
             DB::rollBack();
             // Log::error($e->getMessage());
-            echo $e->getMessage();die();
+            echo $e->getMessage();
+            die();
             return false;
         }
     }
 
-    public function update($id, $request, $languageId){
+    public function update($id, $request, $languageId)
+    {
         DB::beginTransaction();
-        try{
+        try {
+            // dd($request);
 
             $productCatalogue = $this->productCatalogueReponsitory->findById($id);
 
             $flag = $this->updateCatalogue($productCatalogue, $request);
-            if($flag == TRUE){
+            if ($flag == TRUE) {
                 $this->updateLanguageForCatalogue($productCatalogue, $request, $languageId);
-                // $this->updateRouter(
-                //     $productCatalogue, $request, $this->controllerName
-                // );
+                $this->updateRouter(
+                    $productCatalogue,
+                    $request,
+                    $this->controllerName,
+                    $languageId
+                );
                 $this->nestedset = new Nestedsetbie([
                     'table' => 'product_catalogues',
                     'foreignkey' => 'product_catalogue_id',
-                    'language_id' =>  $languageId ,
+                    'language_id' =>  $languageId,
                 ]);
                 $this->nestedset();
             }
             DB::commit();
             return true;
-        }catch(\Exception $e ){
+        } catch (\Exception $e) {
             DB::rollBack();
             // Log::error($e->getMessage());
-            echo $e->getMessage();die();
+            echo $e->getMessage();
+            die();
             return false;
         }
     }
 
-    public function destroy($id, $languageId){
+    public function destroy($id, $languageId)
+    {
         DB::beginTransaction();
-        try{
+        try {
             $productCatalogue = $this->productCatalogueReponsitory->findById($id);
             $deleteproductCatalogue = $this->productCatalogueReponsitory->destroy($productCatalogue);
             $this->nestedset = new Nestedsetbie([
                 'table' => 'product_catalogues',
                 'foreignkey' => 'product_catalogue_id',
-                'language_id' =>  $languageId ,
+                'language_id' =>  $languageId,
             ]);
             $this->nestedset();
             DB::commit();
             return true;
-        }catch(\Exception $e ){
+        } catch (\Exception $e) {
             DB::rollBack();
             // Log::error($e->getMessage());
-            echo $e->getMessage();die();
+            echo $e->getMessage();
+            die();
             return false;
         }
     }
 
-    private function createCatalogue($request){
+    private function createCatalogue($request)
+    {
         // dd($request);
         $payload = $request->only($this->payload());
+        if ($request->hasFile('image')) {
+            $payload['image'] = Storage::put(self::PATH_UPLOAD, $request->file('image'));
+        }
         // $payload['album'] = $this->formatAlbum($request);
         $payload['user_id'] = Auth::id();
         $productCatalogue = $this->productCatalogueReponsitory->create($payload);
@@ -150,13 +170,14 @@ class ProductCatalogueService extends BaseService implements ProductCatalogueSer
         return $productCatalogue;
     }
 
-    private function updateCatalogue($productCatalogue, $request){
+    private function updateCatalogue($productCatalogue, $request)
+    {
         $payload = $request->only($this->payload());
-        // dd($request);
+
         if ($request->hasFile('image')) {
             $payload['image'] = Storage::put(self::PATH_UPLOAD, $request->file('image'));
         }
-
+        // dd($payload);
         $currentImage = $productCatalogue->image;
 
         if ($request->hasFile('image') && $currentImage && Storage::exists($currentImage)) {
@@ -167,14 +188,16 @@ class ProductCatalogueService extends BaseService implements ProductCatalogueSer
         return $flag;
     }
 
-    private function updateLanguageForCatalogue($productCatalogue, $request, $languageId){
+    private function updateLanguageForCatalogue($productCatalogue, $request, $languageId)
+    {
         $payload = $this->formatLanguagePayload($productCatalogue, $request, $languageId);
         $productCatalogue->languages()->detach([$languageId, $productCatalogue->id]);
         $language = $this->productCatalogueReponsitory->createPivot($productCatalogue, $payload, 'languages');
         return $language;
     }
 
-    private function formatLanguagePayload($productCatalogue, $request, $languageId){
+    private function formatLanguagePayload($productCatalogue, $request, $languageId)
+    {
         $payload = $request->only($this->payloadLanguage());
         $payload['canonical'] = Str::slug($payload['canonical']);
         $payload['language_id'] =  $languageId;
@@ -182,43 +205,130 @@ class ProductCatalogueService extends BaseService implements ProductCatalogueSer
         return $payload;
     }
 
-    public function updateStatus($post = []){
+    public function updateStatus($post = [])
+    {
         DB::beginTransaction();
-        try{
-            $payload[$post['field']] = (($post['value'] == 1)?2:1);
+        try {
+            $payload[$post['field']] = (($post['value'] == 1) ? 2 : 1);
             $productCatalogue = $this->productCatalogueReponsitory->findById($post['modelId']);
             $postCatalogue = $this->productCatalogueReponsitory->update($productCatalogue, $payload);
             DB::commit();
             return true;
-        }catch(\Exception $e ){
+        } catch (\Exception $e) {
             DB::rollBack();
             // Log::error($e->getMessage());
-            echo $e->getMessage();die();
+            echo $e->getMessage();
+            die();
             return false;
         }
     }
 
-    public function updateStatusAll($post){
+    public function updateStatusAll($post)
+    {
         DB::beginTransaction();
-        try{
+        try {
             $payload[$post['field']] = $post['value'];
             $flag = $this->productCatalogueReponsitory->updateByWhereIn('id', $post['id'], $payload);
             DB::commit();
             return true;
-        }catch(\Exception $e ){
+        } catch (\Exception $e) {
             DB::rollBack();
             // Log::error($e->getMessage());
-            echo $e->getMessage();die();
+            echo $e->getMessage();
+            die();
             return false;
         }
     }
 
-    public function nestedset(){
+    public function nestedset()
+    {
         $this->nestedset->Get('level ASC, order ASC');
         $this->nestedset->Recursive(0, $this->nestedset->Set());
         $this->nestedset->Action();
     }
 
+    public function setAttribute($product)
+    {
+        $attribute = $product->attribute;
+        $productCatalogueId = (int)$product->product_catalogue_id;
+        $productCatalogue = $this->productCatalogueReponsitory->findById($productCatalogueId);
+        if (!is_array($productCatalogue->attribute)) {
+            $payload['attribute'] = $attribute;
+        } else {
+            $mergeArray = $productCatalogue->attribute;
+            foreach ($attribute as $key => $val) {
+                if (!isset($mergeArray[$key])) {
+                    $mergeArray[$key] = $val;
+                } else {
+                    $mergeArray[$key] = array_values(array_unique(array_merge($mergeArray[$key], $val)));
+                }
+            }
+            $payload['attribute'] = $mergeArray;
+
+            $flatAttributeArray = array_merge(...$mergeArray);
+            $attributeList = $this->AttributeReponsitory->findAttributeproductCatalogueAndProductVariant($flatAttributeArray, $productCatalogue->id);
+            $payload['attribute'] = array_map(function($newArray) use($attributeList) {
+                return array_intersect($newArray, $attributeList->all());
+            }, $mergeArray);
+        }
+
+        // dd($payload['attribute']);
+
+        $result = $this->productCatalogueReponsitory->update($productCatalogue, $payload);
+
+
+        return $result;
+    }
+
+    public function getFilterList(array $attribute = [], $languageId)
+    {
+        $attributeCatalogueId = array_keys($attribute);
+        $attributeId = array_unique(array_merge(...$attribute));
+
+
+        $attributeCatalogues = $this->AttributeCatalogueReponsitory->findByCondition(
+            [
+                config('apps.general.defaultPublish')
+            ],
+            TRUE,
+            ['languages' => function ($query) use ($languageId){
+                $query->where('language_id','=', $languageId);
+            }],
+            ['id', 'ASC'],
+            [
+                'whereIn' => $attributeCatalogueId,
+                'whereInField' => 'id'
+            ]
+        );
+
+        $attributes = $this->AttributeReponsitory->findByCondition(
+            [
+                config('apps.general.defaultPublish')
+            ],
+            TRUE,
+            ['languages' => function ($query) use ($languageId){
+                $query->where('language_id','=', $languageId);
+            }],
+            ['id', 'ASC'],
+            [
+                'whereIn' => $attributeId,
+                'whereInField' => 'id'
+            ]
+        );
+        // dd($attributeCatalogues, $attributes);
+
+        foreach ($attributeCatalogues as $key => $val) {
+            $attributeItem = []; // Reset lại mảng trong mỗi vòng lặp
+            foreach ($attributes as $index => $item) {
+                if($item->attribute_catalogue_id == $val->id){
+                    $attributeItem[] = $item;
+                }
+            }
+            $val->setAttribute('attributes', $attributeItem);
+        }
+        // dd($attributeCatalogues);
+        return $attributeCatalogues;
+    }
     // public function formatRouterPayload($model, $request, $controllerName, $languageId){
     //     $router = [
     //         'canonical' => Str::slug($request->input('canonical')),
@@ -233,21 +343,23 @@ class ProductCatalogueService extends BaseService implements ProductCatalogueSer
     //     $router = $this->formatRouterPayload($model, $request, $controllerName, $languageId);
     //     $this->routerRepository->create($router);
     // }
-    
 
-    private function paginateSelect(){
+
+    private function paginateSelect()
+    {
         return [
-            'product_catalogues.id', 
+            'product_catalogues.id',
             'product_catalogues.publish',
             'product_catalogues.image',
             'product_catalogues.level',
             'product_catalogues.order',
-            'tb2.name', 
+            'tb2.name',
             'tb2.canonical',
         ];
     }
 
-    private function payload(){
+    private function payload()
+    {
         return [
             'parent_id',
             'follow',
@@ -256,7 +368,8 @@ class ProductCatalogueService extends BaseService implements ProductCatalogueSer
             'album',
         ];
     }
-    private function payloadLanguage(){
+    private function payloadLanguage()
+    {
         return [
             'name',
             'description',
@@ -267,6 +380,4 @@ class ProductCatalogueService extends BaseService implements ProductCatalogueSer
             'canonical'
         ];
     }
-
-
 }

@@ -8,9 +8,11 @@ namespace App\Repositories\Interfaces;
  */
 interface BaseRepositoryInterface
 {
-    public function all(array $relation);
+    public function all(array $relation, string $selectRaw = '');
 
     public function findById(int $id);
+
+    public function create($data);
 
     // public function update(array $a = [], array $payload = []);
     public function pagination(

@@ -2,6 +2,12 @@
 return [
     'module' => [
         [
+            'title' => 'Dashboard',
+            'icon' => 'fa fa-database',
+            'name' => ['dashboard'],
+            'class' => 'special'
+        ],
+        [
             'title' => 'QL sản phẩm',
             'icon' => 'fa fa-cube',
             'name' => ['product','attribute'],
@@ -23,6 +29,17 @@ return [
                     'route' => 'admin/attribute/index'
                 ],
 
+            ]
+        ],
+        [
+            'title' => 'QL Đơn hàng',
+            'icon' => 'fa fa-shopping-bag',
+            'name' => ['order'],
+            'subModule' => [
+                [
+                    'title' => 'QL Đơn hàng',
+                    'route' => 'admin/order/index'
+                ],
             ]
         ],
         [

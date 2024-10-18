@@ -24,9 +24,14 @@ class ProductCatalogue extends Model
         'follow',
         'order',
         'user_id',
+        'attribute'
     ];
 
     protected $table = 'product_catalogues';
+    protected $casts = [
+        'attribute' => 'json'
+    ];
+
 
     public function languages(){
         return $this->belongsToMany(Language::class, 'product_catalogue_language' , 'product_catalogue_id', 'language_id')
@@ -44,9 +49,11 @@ class ProductCatalogue extends Model
     }
 
     public function products(){
-        return $this->belongsToMany(Product::class, 'product_catalogue_product' , 'product_catalogue_id', 'product_id');
+        return $this->belongsToMany(Product::class, 'product_catalogue_product' , 'product_catalogue_id', 'product_id')->withPivot(
+            'product_catalogue_id',
+            'product_id',
+        );
     }
-
 
     public function product_catalogue_language(){
         return $this->hasMany(ProductCatalogueLanguage::class, 'product_catalogue_id', 'id')->where('language_id','=',1);

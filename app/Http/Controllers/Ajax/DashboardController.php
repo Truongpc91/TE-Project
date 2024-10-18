@@ -62,7 +62,7 @@ class DashboardController extends Controller
         $model = $request->input('model');
         $page = $request->input('page') ?? 1;
         $keyword = $request->string('keyword') ?? null;
-        $serviceInstance = $this->loadClassInterface($model, 'Reponsitory');
+        $serviceInstance = $this->loadClassInterface($model,'Repositories', 'Reponsitory');
 
         $arguments = $this->paginationArgument($model, $keyword);
         $object = $serviceInstance->pagination(...array_values($arguments));

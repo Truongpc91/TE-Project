@@ -2,10 +2,19 @@
 
 namespace App\Providers;
 
-use DateTime;
+use App\Http\ViewComposers\LanguageComposer;
+use App\Http\ViewComposers\MenuComposer;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema;
+
+use App\Models\Language;
+use App\Http\ViewComposers\SystemComposer;
+
 use Carbon\Carbon;
+use DateTime;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
         'App\Services\Interfaces\SourceServiceInterface' => 'App\Services\SourceService',
         'App\Services\Interfaces\CustomerCatalogueServiceInterface' => 'App\Services\CustomerCatalogueService',
         'App\Services\Interfaces\CustomerServiceInterface' => 'App\Services\CustomerService',
+        'App\Services\Interfaces\CartServiceInterface' => 'App\Services\CartService',
+        'App\Services\Interfaces\OrderServiceInterface' => 'App\Services\OrderService',
+        'App\Services\Interfaces\ReviewServiceInterface' => 'App\Services\ReviewService',
     ];
 
     /**
@@ -49,6 +61,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $locale = app()->getLocale(); // vn en cn
+        $language = Language::where('canonical', $locale)->first();
+        
         Validator::extend('custom_date_format', function($attribute, $value, $parameters, $validator){
             return DateTime::createFromFormat('d/m/Y H:i', $value) !== false;
         });
@@ -59,5 +74,21 @@ class AppServiceProvider extends ServiceProvider
             
             return $endDate->greaterThan($startDate) !== false;
         });
+
+        view()->composer('frontend.homepage.layout', function ($view) use ($language) {
+            $composerClass = [
+                SystemComposer::class,
+                MenuComposer::class,
+                LanguageComposer::class
+            ];
+
+            foreach ($composerClass as $key => $val) {
+                $composer = app()->make($val, ['language' => $language->id]);
+                $composer->compose($view);
+            }
+        });
+        
+
+        Schema::defaultStringLength(255);
     }
 }

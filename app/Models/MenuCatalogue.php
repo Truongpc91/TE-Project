@@ -18,4 +18,9 @@ class MenuCatalogue extends Model
         'keyword',
         'publish'
     ];
+
+    public function menus()
+    {
+        return $this->hasMany(Menu::class, 'menu_catalogue_id', 'id');
+    }
 }

@@ -2,14 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Services\Interfaces\SystemServiceInterface;
 use App\Repositories\Interfaces\SystemReponsitoryInterface as systemRepository;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -50,13 +47,13 @@ class SystemService implements SystemServiceInterface
                         'keyword' => $key,
                         'content' => $val,
                         'language_id' => $languageId,
-                        'user_id' => Auth::user()->id
+                        'user_id' => Auth::user()->id,
                     ];
+                   
                 }
             }
             $condition = ['keyword' => $key, 'language_id' => $languageId];
             $this->systemRepository->updateOrInsert($payload, $condition);
-            // dd($payload);
             DB::commit();
             return true;
         } catch (\Exception $e) {

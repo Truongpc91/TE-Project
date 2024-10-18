@@ -48,6 +48,7 @@ class PromotionService implements PromotionServiceInterface
             $payload = $this->request($request);
 
             $promotion = $this->promotionRepository->create($payload);
+            // dd($promotion);
             if ($promotion->id > 0) {
                 $this->handleRelation($request,  $promotion);
             }
@@ -87,15 +88,16 @@ class PromotionService implements PromotionServiceInterface
     private function handleRelation($request, $promotion, $method = 'create'){
         if($request->input('method') === PromotionEnums::PRODUCT_AND_QUANTITY){
             $object = $request->input('object');
+            // dd($request);
             $payloadRelations = [];
             foreach ($object['id'] as $key => $val) {
                 $payloadRelations[] = [
                     'product_id'   => $val,
-                    // 'product_variant_id' => $object['product_variant_id'][$key],
-                    'product_variant_id' => $object['variant_uuid'][$key],
+                    'variant_uuid' => $object['variant_uuid'][$key],
                     'model' => $request->input(PromotionEnums::MODULE_TYPE)
                 ];
             }
+            // dd($payloadRelations);
             if($method == 'update'){
                 $promotion->products()->detach([]);
             }
@@ -119,11 +121,25 @@ class PromotionService implements PromotionServiceInterface
 
     private function request($request){
         $payload = $request->only('name', 'code', 'description', 'method', 'startDate', 'endDate', 'neverEndDate');
+        $payload['discountValue'] = $request->input(PromotionEnums::PRODUCT_AND_QUANTITY.'.discountValue');
+        $payload['discountType'] = $request->input(PromotionEnums::PRODUCT_AND_QUANTITY.'.discountType');
+        $payload['maxDiscountValue'] = $request->input(PromotionEnums::PRODUCT_AND_QUANTITY.'.maxDiscountValue');
+        if (is_null($payload['discountValue'])) {
+            $payload['discountValue'] =  0;
+        }
+        if (is_null($payload['discountType'])) {
+            $payload['discountType'] =  '';
+        }
+        if (is_null($payload['maxDiscountValue'])) {
+            $payload['maxDiscountValue'] =  0;
+        }
+        // dd($payload);
         $payload['startDate'] = Carbon::createFromFormat('d/m/Y H:i',$payload['startDate']);
         if(isset($payload['endDate'])){
             $payload['endDate'] = Carbon::createFromFormat('d/m/Y H:i',$payload['endDate']);
         }
         $payload['code'] = (empty($payload['code'])) ? time() : $payload['code'];
+        // dd($payload);
         switch ($payload['method']) {
             case PromotionEnums::ORDER_AMOUNT_RANGE:
                 $payload[PromotionEnums::DISCOUNT] = $this->orderByRange($request);
@@ -132,6 +148,7 @@ class PromotionService implements PromotionServiceInterface
                 $payload[PromotionEnums::DISCOUNT] = $this->productAndQuantity($request);
                 break;
         }
+        // dd($payload);
         return $payload;
     }
 
@@ -228,12 +245,14 @@ class PromotionService implements PromotionServiceInterface
                 $data['apply']['condition'][$val] = $request->input($val);
             }
         }
+
         return $data;
     }
 
     private function orderByRange($request)
     {
         $data['info'] = $request->input('promotion_order_amount_range');
+        // dd($data + $this->handleSourceAndCondition($request));
         return $data + $this->handleSourceAndCondition($request);
     }
 

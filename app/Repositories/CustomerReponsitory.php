@@ -49,4 +49,8 @@ class CustomerReponsitory extends BaseRepository implements CustomerReponsitoryI
         return $query->paginate($perPage)
         ->withQueryString()->withPath(env('APP_URL').$extend['path']);
     }
+
+    public function totalCustomer(){
+        return $this->model->count();
+    }
 }

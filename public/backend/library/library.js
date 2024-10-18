@@ -167,6 +167,12 @@
         });
     };
 
+    HT.setupDateRangePicker = () => {
+        if ($(".rangepicker").length > 0) {
+            $(".rangepicker").daterangepicker();
+        }
+    };
+
     $(document).ready(function () {
         HT.switchery();
         HT.select2();
@@ -176,5 +182,6 @@
         HT.allChecked();
         HT.changeStatusAll();
         HT.setupDatepicker();
+        HT.setupDateRangePicker();
     });
 })(jQuery);

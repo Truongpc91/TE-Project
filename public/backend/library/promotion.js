@@ -674,6 +674,8 @@
             data: option,
             dataType: "json",
             success: function (res) {
+                console.log(res);
+                
                 HT.fillToObjectList(res);
             },
         });
@@ -691,6 +693,8 @@
     };
 
     HT.fillToObjectList = (data) => {
+        console.log(data.objects.data);  
+        
         switch (data.model) {
             case "Product":
                 HT.fillProductToList(data.objects);
@@ -702,6 +706,8 @@
     };
 
     HT.fillProductCatalogueToList = (object) => {
+       
+        
         let html = "";
         if (object.data.length) {
             let model = $(".select-product-and-quantity").val();
@@ -716,12 +722,11 @@
                 let isChecked = $(".boxWrapper ." + classBox + "").length
                     ? true
                     : false;
-                let uuid = object.data[i].uuid;
+                // let uuid = object.data[i].uuid;
                 html += `
                 <div class="search-object-item" 
                         data-productid="${id}" 
-                        data-name="${name}"
-                        data-uuid="${uuid}"
+                        data-name="${name}" 
                     >
                     <div class="" style="display:flex; justify-content:space-between">
                         <div class="object-info">
@@ -754,6 +759,7 @@
     };
 
     HT.fillProductToList = (object) => {
+        console.log(object.data);
         let html = "";
         if (object.data.length) {
             let model = $(".select-product-and-quantity").val();
@@ -773,11 +779,12 @@
                 let isChecked = $(".boxWrapper ." + classBox + "").length
                     ? true
                     : false;
-
+                let uuid = object.data[i].uuid;
                 html += `<div class="search-object-item" 
                                 data-productid="${product_id}" 
                                 data-variant-id="${product_variant_id}"
                                 data-name="${name}"
+                                data-uuid="${uuid}"
                             >
                             <div class="" style="display:flex; justify-content:space-between">
                                 <div class="object-info">
@@ -923,18 +930,20 @@
     };
 
     HT.confirmProductPromotion = () => {
+        console.log(123);
+        
         let preloadData = JSON.parse($(".input_object").val()) || {
             id: [],
             product_variant_id: [],
             name: [],
-            uuid: [],
+            variant_uuid: [],
         };
 
         let objectArray = preloadData.id.map((id, index) => ({
             product_id: id,
             product_variant_id: preloadData.product_variant_id[index] || "null",
             name: preloadData.name[index],
-            uuid: preloadData.uuid[index] || "null",
+            uuid: preloadData.variant_uuid[index] || "null",
         }));
 
         console.log(objectArray);

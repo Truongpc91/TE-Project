@@ -27,40 +27,19 @@
                     TE+
                 </div>
             </li>
-            {{-- @dd(config('apps.module.module')) --}}
-            {{-- @php
-                $i = 0;
-            @endphp --}}
             @foreach (__('sidebar.module') as $item => $value)
-            {{-- @php
-                $i ++;
-            @endphp --}}
-                <li class="{{ in_array($segment, $value['name']) ? 'active' : '' }}">
-                    <a href=""><i class="{{ $value['icon'] }}"></i><span class="nav-label">{{ $value['title'] }}</span> <span
-                            class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        @foreach ($value['subModule'] as $item => $val)
-                            <li><a href="{{ $val['route'] }}">{{ $val['title'] }}</a></li>
-                        @endforeach
-                    </ul>
+                <li class="{{ (isset($value['class']) ? $value['class'] : '') }} {{ in_array($segment, $value['name']) ? 'active' : '' }}">
+                    <a href="{{ route('admin.dashboard.index') }}"><i class="{{ $value['icon'] }}"></i><span
+                            class="nav-label">{{ $value['title'] }}</span> <span class="fa arrow"></span></a>
+                    @if (isset($value['subModule']))
+                        <ul class="nav nav-second-level">
+                            @foreach ($value['subModule'] as $item => $val)
+                                <li><a href="{{ $val['route'] }}">{{ $val['title'] }}</a></li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </li>
             @endforeach
-            {{-- <li class="active">
-                <a href=""><i class="fa fa-th-large"></i> <span class="nav-label">QL Thành Viên</span> <span
-                        class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li><a href="{{ route('admin.user_catalogue.index') }}">QL Nhóm Thành Viên</a></li>
-                    <li><a href="{{ route('admin.users.index') }}">QL Thành Viên</a></li>
-                </ul>
-            </li> --}}
-            {{-- <li>
-                <a href=""><i class=""></i> <span class="nav-label">QL Bài Viết</span> <span
-                        class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li><a href="{{ route('admin.user_catalogue.index') }}">QL Nhóm Bài Viết</a></li>
-                    <li><a href="{{ route('admin.users.index') }}">QL Bài Viết</a></li>
-                </ul>
-            </li> --}}
         </ul>
     </div>
 </nav>

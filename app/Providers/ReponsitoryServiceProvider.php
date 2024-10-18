@@ -39,6 +39,8 @@ class ReponsitoryServiceProvider extends ServiceProvider
         'App\Repositories\Interfaces\SourceReponsitoryInterface' => 'App\Repositories\SourceReponsitory',
         'App\Repositories\Interfaces\CustomerCatalogueReponsitoryInterface' => 'App\Repositories\CustomerCatalogueReponsitory',
         'App\Repositories\Interfaces\CustomerReponsitoryInterface' => 'App\Repositories\CustomerReponsitory',
+        'App\Repositories\Interfaces\OrderReponsitoryInterface' => 'App\Repositories\OrderReponsitory',
+        'App\Repositories\Interfaces\ReviewReponsitoryInterface' => 'App\Repositories\ReviewReponsitory',
     ];
 
     public function register(): void

@@ -50,7 +50,7 @@ a<table class="table table-striped table-bordered">
                     <td class="text-center js-switch-{{ $product->id }}">
                         <input type="checkbox" value="{{ $product->publish }}" class="js-switch status "
                             data-field="publish" data-model="{{ $config['model'] }}"
-                            {{ $product->publish == 2 ? 'checked' : '' }} data-modelId="{{ $product->id }}" />
+                            {{ $product->publish == 1 ? 'checked' : '' }} data-modelId="{{ $product->id }}" />
                     </td>
                     <td class="text-center">
                         <a href="{{ route('admin.product.edit', $product) }}" class="btn btn-success"><i

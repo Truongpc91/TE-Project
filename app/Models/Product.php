@@ -59,8 +59,27 @@ class Product extends Model
     public function promotions(){
         return $this->belongsToMany(Promotion::class, 'promotion_product_variant' , 'product_id', 'promotion_id')
         ->withPivot(
-            'product_variant_id',
+            'variant_uuid',
             'model',
         )->withTimestamps();
+    }
+
+    protected $casts = [
+        'attribute' => 'json',
+    ];
+
+    public function orders(){
+        return $this->belongsToMany(Order::class, 'order_product' , 'product_id', 'order_id')
+        ->withPivot(
+            'uuid',
+            'name',
+            'qty',
+            'price',
+            'option',
+        )->withTimestamps();
+    }
+
+    public function reviews() {
+        return $this->morphMany(Review::class, 'reviewable');
     }
 }

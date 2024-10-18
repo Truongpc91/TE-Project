@@ -30,7 +30,7 @@ class CustomerService implements CustomerServiceInterface
         $condition['keyword'] = addslashes($request->input('keyword'));
         $condition['publish'] = $request->integer('publish');
         $perPage = addslashes($request->integer('per_page'));
-    
+
 
         $customers = $this->customerRepository->customerPagination(
             ['*'],
@@ -76,7 +76,7 @@ class CustomerService implements CustomerServiceInterface
             }
 
             $currentImage = $customer->image;
-    
+
             if ($request->hasFile('image') && $currentImage && Storage::exists($currentImage)) {
                 Storage::delete($currentImage);
             }
@@ -155,6 +155,13 @@ class CustomerService implements CustomerServiceInterface
         $birthday = $carbonDate->format('Y-m-d H:i:s');
 
         return $birthday;
+    }
+
+    public function customerStatistic()
+    {
+        return [
+            'totalCustomers' => $this->customerRepository->totalCustomer(),
+        ];
     }
 
     private function payload()

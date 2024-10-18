@@ -1,5 +1,14 @@
 <?php
 return [
+    'order' => [
+        'index' => [
+            'title' => 'Quản lý Đơn hàng',
+            'table' => 'Danh sách Đơn hàng'
+        ],
+        'detail' => [
+            'title' => 'Quản ký thông tin chi tiết đơn hàng'
+        ],
+    ],
     'galleryCatalogue' => [
         'index' => [
             'title' => 'Quản lý hình ảnh',
@@ -306,9 +315,9 @@ return [
     'tableHeading' => 'Thông tin chung',
     'save' => 'Lưu lại',
     'publish' => [
-        '0' => 'Chọn tình trạng',
-        '1' => 'Không xuất bản',
-        '2' => 'Xuất bản',
+        '-1' => 'Chọn tình trạng',
+        '0' => 'Không xuất bản',
+        '1' => 'Xuất bản',
     ],
     'follow' => [
         '1' => 'Follow',

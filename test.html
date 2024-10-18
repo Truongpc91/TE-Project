@@ -1,49 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Mail đơn hàng</title>
+    <link rel='stylesheet' href='https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'>
+    <script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>
+    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js'></script>
+
 </head>
-<style>
-    .outer {
-    display: inline-block; /* Đảm bảo class ngoài cùng thay đổi theo kích thước bên trong */
-    border: 1px solid black; /* Tùy chọn: thêm viền để dễ thấy */
-    padding: 10px; /* Tùy chọn: khoảng cách bên trong */
-}
 
-.inner {
-    width: auto; /* Để class bên trong tự điều chỉnh width */
-    height: auto; /* Để class bên trong tự điều chỉnh height */
-    background-color: lightblue; /* Màu nền để dễ nhận diện */
-}
-</style>
-<div>
-    <div class="outer">
-        <div class="inner">
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
-            Nội dung bên trong có thể thay đổi kích thước.
 
-        </div>
+<body>
+    <div class='category-title'><a href=''' title=''>{{ $catName }}</a></div>
+    <h3 class=' title'><a href='{{ $canonical }}' title=''>{{ $name }}</a></h3>
+            <div class='rating'>
+                <div class='uk-flex uk-flex-middle'>
+                    <div class='star'>
+                        @for ($i = 0; $i < $review['stars']; $i++) <i class='fa fa-star'></i>
+                            @endfor
+                    </div>
+                    <span class='rate-number'>({{ $review['count'] }})</span>
+                </div>
+            </div>
+            <div class='product-group'>
+                <div class='uk-flex uk-flex-middle uk-flex-space-between'>
+                    {!! $price['html'] !!}
+                    <div class='addcart'>
+                        {!! renderQuickBuy($product, $canonical, $name) !!}
+                    </div>
+                </div>
+            </div>
+
     </div>
-
-</div>
-
+    <div class='tools'>
+        <a href='title='><img src='../frontend/resources/img/trend.svg' alt=''></a>
+        <a href='title='><img src='../frontend/resources/img/wishlist.svg' alt=''></a>
+        <a href='title='><img src='../frontend/resources/img/compare.svg' alt=''></a>
+        <a href='#popup' data-uk-modal title=''><img src='../frontend/resources/img/view.svg' alt=''></a>
+    </div>
+    </div>
 </body>
 
 </html>
